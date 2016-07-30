@@ -20,26 +20,11 @@
     
     isTextFld=NO;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideLoaderClock:)
-                                                 name:@"clockReadFinished"
-                                               object:nil];
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadTable:)
-                                                 name:@"tableAftrRead"
-                                               object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLoaderClock:) name:@"clockReadFinished" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable:) name:@"tableAftrRead" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableWrite) name:@"tableAftrWrite" object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadTableWrite)
-                                                 name:@"tableAftrWrite"
-                                               object:nil];
-
-
-    NSString*str=@"Home";
-    [[NSUserDefaults standardUserDefaults] setObject:str forKey:@"HomeName"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"Home" forKey:@"HomeName"];
     [[NSUserDefaults standardUserDefaults] synchronize];
    
     [super viewDidLoad];
@@ -48,7 +33,6 @@
     [userDeafult setObject:@"VISITED" forKey:FIRST_TIME_SCREEN];
     UIImage *imgae=[UIImage imageNamed:@"img1.png"];
     NSData *imageData = [[NSData alloc] initWithData:UIImageJPEGRepresentation((imgae), 1.0)];
-    NSLog(@"lenthhhhbytess %lu",(unsigned long)imageData.length);
 
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
@@ -63,14 +47,9 @@
     top_view.layer.shadowOffset = CGSizeMake(0, 1);
     top_view.layer.shadowRadius = 3;
     top_view.layer.shadowOpacity =.5;
-     btn_back.hidden=YES;
+    btn_back.hidden=YES;
  
-    //  self.view.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0f/255 blue:245.0F/255 alpha:1];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideBACK:)
-                                                 name:@"NAMESHUTTER_HIDE_BACK"
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideBACK:) name:@"NAMESHUTTER_HIDE_BACK" object:nil];
    
     isselected=NO;
     selectedINedx=-1;
@@ -80,100 +59,49 @@
     table_shutter.backgroundColor=[UIColor clearColor];
     view_nameHolder.hidden=YES;
     
-    //table_shutter.backgroundColor=[UIColor colorWithRed:58.0F/255 green:98.0f/255 blue:133.0f/255 alpha:1];
-    
-    if (app.frstScreencount==1){
-        
-        //        btn_back.hidden=YES;
-        //        app.frstScreencount=2;
-    
-    
-    }
-
     UISwipeGestureRecognizer * swipeleft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeleft:)];
     swipeleft.direction=UISwipeGestureRecognizerDirectionLeft;
     [self.view addGestureRecognizer:swipeleft];
-    
- 
- 
-    
-
 }
 
--(void)reloadTable:(NSNotification *)notify
-{
-[MBProgressHUD hideHUDForView:self.view animated:YES];
-   [self performSelector:@selector(loadclock) withObject:self afterDelay:0.0];
-    
-MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+-(void)reloadTable:(NSNotification *)notify {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    [self performSelector:@selector(loadclock) withObject:self afterDelay:0.0];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Clock sync...";
     [hud show:YES];
-
-   
     [table_shutter reloadData];
 }
--(void)hideLoaderClock:(NSNotification *)notify
-{
-    
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
-    
-    
-    
-    
-   }
 
--(void)loadclock
-{
+-(void)hideLoaderClock:(NSNotification *)notify {
+   [MBProgressHUD hideHUDForView:self.view animated:YES];
+}
 
+-(void)loadclock {
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
     [csensor counterUpload:NO UUID:@"" presetshutter:@"" on:YES];
 }
--(void)reloadTableWrite
-{
 
-[MBProgressHUD hideHUDForView:self.view animated:YES];
- [table_shutter reloadData];
-    
+-(void)reloadTableWrite {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    [table_shutter reloadData];
 }
--(void)viewDidAppear:(BOOL)animated
-{
-    
-    
-    
+
+-(void)viewDidAppear:(BOOL)animated {
 }
--(void)showBACK:(NSNotification *)notification
-{
-    if ([[notification name] isEqualToString:@"NAMESHUTTER_SHOW_BACK"])
-    {
-      
+
+-(void)showBACK:(NSNotification *)notification {
+    if ([[notification name] isEqualToString:@"NAMESHUTTER_SHOW_BACK"]) {
         NSLog(@"NAMESHUTTER_SHOW_BACK");
-       // btn_back.hidden=NO;
-
-    }
-    else{
-        
-    
     }
 }
--(void)hideBACK:(NSNotification *)notification
-{
-    
-    if ([[notification name] isEqualToString:@"NAMESHUTTER_HIDE_BACK"])
-    {
-        
-        
+
+-(void)hideBACK:(NSNotification *)notification {
+    if ([[notification name] isEqualToString:@"NAMESHUTTER_HIDE_BACK"]) {
         NSLog(@"NAMESHUTTER_HIDE_BACK");
         btn_back.hidden=YES;
-        
-        
-        
-    }
-    else{
-        
-        
-
-    }
+     }
 }
 
 -(void)pairDevices:(NSMutableArray *)list
@@ -292,9 +220,7 @@ MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 
 
 }
--(IBAction)confifrmBtnPressed:(id)sender
-{
-   
+-(IBAction)confifrmBtnPressed:(id)sender {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Reading Devices...";
     [hud show:YES];

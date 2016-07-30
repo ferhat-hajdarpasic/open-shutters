@@ -57,54 +57,22 @@ int accRange = 0;
     for(CBPeripheral *p  in self.sensorTags) {
         p.delegate=self;
         NSUUID* serverId = [p identifier];
-             if (offf==YES){
-              
-                 //            NSString *CheckString = [[NSUserDefaults standardUserDefaults]
-                 //                                     stringForKey:@"HomeName"];
-                 //            if ([CheckString isEqualToString:@"Home"])
-                 //            {
-//                 ttt=[NSTimer scheduledTimerWithTimeInterval:0.01
-//                                                      target:self
-//                                                    selector:@selector(readSytemID:)
-//                                                    userInfo:p
-//                                                     repeats:YES];
-
-       
-
-        }
-        //else if (connectP)
-      
+        if (offf==YES){ }
         NSLog(@"serverId MAC ADDRESS %@",serverId.UUIDString);
         [self.instrummetList addObject:p.identifier.UUIDString];
-    
     }
     if (self.sensorTags.count>0) {
-        
         if ([readDevice isEqualToString:@"readDEV"]) {
-            
-        
-        [self performSelector:@selector(connectCommand) withObject:self afterDelay:3.1];
-        
-        if([self.delegate respondsToSelector:@selector(devicesFound:)])
-        {
-            
-            [self.delegate devicesFound:self.instrummetList];
-            
+            [self performSelector:@selector(connectCommand) withObject:self afterDelay:3.1];
+            if([self.delegate respondsToSelector:@selector(devicesFound:)]) {
+                [self.delegate devicesFound:self.instrummetList];
             }
+        } else  if ([readDevice isEqualToString:@"READPRESET"]) {
+        } else {
+            self.response_Arr=[[NSMutableArray alloc]init];
+            [self performSelector:@selector(connectClockID) withObject:self afterDelay:2.9f];
         }
-        else  if ([readDevice isEqualToString:@"READPRESET"]){
-        
-            
-        
-        }
-        else{
-         self.response_Arr=[[NSMutableArray alloc]init];
-        [self performSelector:@selector(connectClockID) withObject:self afterDelay:2.9f];
-        
-            }
-        
-        }
-    
+    }
 }
 
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
@@ -1719,63 +1687,34 @@ else if ([writeCommd isEqualToString:@"0200"])
 {
 
 }
--(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
-    
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"loaderForReading"
-     object:self userInfo:nil];
-    NSUUID* serverId = [peripheral identifier];
-    NSLog(@"advertisementData : %@",advertisementData);
-    NSLog(@"serverId MAC ADDRESS %@",serverId);
-    
-    /* iOS 6.0 bug workaround : connect to device before displaying UUID !
-     The reason for this is that the CFUUID .UUID property of CBPeripheral
-     here is null the first time an unkown (never connected before in any app)
-     peripheral is connected. So therefore we connect to all peripherals we find.
-     */
 
-    //IOCharacteristic
+-(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"loaderForReading" object:self userInfo:nil];
+    NSLog(@"advertisementData : %@",advertisementData);
+    NSLog(@"serverId MAC ADDRESS %@", [peripheral identifier]);
     
     if ([[advertisementData valueForKey:@"kCBAdvDataLocalName"] isEqualToString:@"CC2650 SensorTag"]){
-       // [self.m stopScan];
         [self.sensorTags addObject:peripheral];
         [peripheral setDelegate:self];
         [self.m connectPeripheral:peripheral options:nil];
-    
     }
     
     NSLog(@"self.sensorTags %@",self.sensorTags);
     [self StagNames];
-    
-    //
-    //[self.nDevices addObject:self.sensorTagPeripheral];
-
 }
+
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
-    
-   
-    
     NSLog(@"Peripheral Connected");
     [peripheral discoverServices:nil];
-   // [peripheral setDelegate:self];
-    
-   
-
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-//    if (error) {
-//        NSLog(@"Error discovering services: %@", [error localizedDescription]);
-//        return;
-//    }
        for (CBService *s in peripheral.services) {
-       
            NSLog(@"servicessssensrr %@",s);
            [peripheral discoverCharacteristics:nil forService:s];
-        
        }
-
 }
+
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:( NSError *)error{
     int enable = ENABLE_SENSOR_CODE;
     int frequency = 0x0A;
