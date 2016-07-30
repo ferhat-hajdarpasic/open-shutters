@@ -862,10 +862,6 @@ int accRange = 0;
     }
 }
 
--(void)connectCommand1 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
-}
-
 -(void)readSytemID:(NSTimer*)theTimer {
     CBPeripheral *p=[theTimer userInfo];
     IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
@@ -1487,7 +1483,6 @@ int accRange = 0;
         if([self.delegate respondsToSelector:@selector(devicesFound:)]) {
             [self.delegate devicesFound:self.instrummetList];
         }
-        [self performSelector:@selector(connectCommand1) withObject:self afterDelay:1];
 
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
@@ -1514,7 +1509,9 @@ int accRange = 0;
 
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
     NSLog(@"Peripheral Connected");
-    [peripheral discoverServices:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+    
+    //[peripheral discoverServices:nil];
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
