@@ -145,6 +145,15 @@
 		61FED5401BEB25A6006C67D3 /* iCarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 61FED53F1BEB25A6006C67D3 /* iCarousel.m */; };
 		61FF27081BE1DF3E002D1E7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FF27071BE1DF3E002D1E7C /* UIKit.framework */; };
 		61FF270A1BE1DF46002D1E7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FF27091BE1DF46002D1E7C /* Foundation.framework */; };
+		A585333E1D4C76A600FFE639 /* sensorTagAirPressureService.m in Sources */ = {isa = PBXBuildFile; fileRef = A585333B1D4C76A600FFE639 /* sensorTagAirPressureService.m */; };
+		A585333F1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.m in Sources */ = {isa = PBXBuildFile; fileRef = A585333D1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.m */; };
+		A58533481D4C76C300FFE639 /* sensorTagHumidityService.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533411D4C76C300FFE639 /* sensorTagHumidityService.m */; };
+		A58533491D4C76C300FFE639 /* sensorTagKeyService.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533431D4C76C300FFE639 /* sensorTagKeyService.m */; };
+		A585334A1D4C76C300FFE639 /* sensorTagLightService.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533451D4C76C300FFE639 /* sensorTagLightService.m */; };
+		A585334B1D4C76C300FFE639 /* sensorTagMovementService.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533471D4C76C300FFE639 /* sensorTagMovementService.m */; };
+		A585334E1D4C774600FFE639 /* bleGenericService.m in Sources */ = {isa = PBXBuildFile; fileRef = A585334D1D4C774600FFE639 /* bleGenericService.m */; };
+		A58533511D4C777600FFE639 /* bluetoothHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533501D4C777600FFE639 /* bluetoothHandler.m */; };
+		A58533541D4C77DD00FFE639 /* sensorFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A58533531D4C77DD00FFE639 /* sensorFunctions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -336,6 +345,25 @@
 		61FF27071BE1DF3E002D1E7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		61FF27091BE1DF46002D1E7C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		61FF270B1BE21EEC002D1E7C /* Macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macros.h; sourceTree = "<group>"; };
+		A585333A1D4C76A600FFE639 /* sensorTagAirPressureService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagAirPressureService.h; sourceTree = "<group>"; };
+		A585333B1D4C76A600FFE639 /* sensorTagAirPressureService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagAirPressureService.m; sourceTree = "<group>"; };
+		A585333C1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagAmbientTemperatureService.h; sourceTree = "<group>"; };
+		A585333D1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagAmbientTemperatureService.m; sourceTree = "<group>"; };
+		A58533401D4C76C300FFE639 /* sensorTagHumidityService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagHumidityService.h; sourceTree = "<group>"; };
+		A58533411D4C76C300FFE639 /* sensorTagHumidityService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagHumidityService.m; sourceTree = "<group>"; };
+		A58533421D4C76C300FFE639 /* sensorTagKeyService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagKeyService.h; sourceTree = "<group>"; };
+		A58533431D4C76C300FFE639 /* sensorTagKeyService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagKeyService.m; sourceTree = "<group>"; };
+		A58533441D4C76C300FFE639 /* sensorTagLightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagLightService.h; sourceTree = "<group>"; };
+		A58533451D4C76C300FFE639 /* sensorTagLightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagLightService.m; sourceTree = "<group>"; };
+		A58533461D4C76C300FFE639 /* sensorTagMovementService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorTagMovementService.h; sourceTree = "<group>"; };
+		A58533471D4C76C300FFE639 /* sensorTagMovementService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorTagMovementService.m; sourceTree = "<group>"; };
+		A585334C1D4C774600FFE639 /* bleGenericService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bleGenericService.h; sourceTree = "<group>"; };
+		A585334D1D4C774600FFE639 /* bleGenericService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bleGenericService.m; sourceTree = "<group>"; };
+		A585334F1D4C777600FFE639 /* bluetoothHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bluetoothHandler.h; sourceTree = "<group>"; };
+		A58533501D4C777600FFE639 /* bluetoothHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bluetoothHandler.m; sourceTree = "<group>"; };
+		A58533521D4C77DD00FFE639 /* sensorFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensorFunctions.h; sourceTree = "<group>"; };
+		A58533531D4C77DD00FFE639 /* sensorFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sensorFunctions.m; sourceTree = "<group>"; };
+		A58533551D4C781100FFE639 /* masterUUIDList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = masterUUIDList.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -436,6 +464,25 @@
 		610C08C91BDF4ED400CF8BE0 /* OpenShutters */ = {
 			isa = PBXGroup;
 			children = (
+				A58533551D4C781100FFE639 /* masterUUIDList.h */,
+				A58533521D4C77DD00FFE639 /* sensorFunctions.h */,
+				A58533531D4C77DD00FFE639 /* sensorFunctions.m */,
+				A585334F1D4C777600FFE639 /* bluetoothHandler.h */,
+				A58533501D4C777600FFE639 /* bluetoothHandler.m */,
+				A585334C1D4C774600FFE639 /* bleGenericService.h */,
+				A585334D1D4C774600FFE639 /* bleGenericService.m */,
+				A58533401D4C76C300FFE639 /* sensorTagHumidityService.h */,
+				A58533411D4C76C300FFE639 /* sensorTagHumidityService.m */,
+				A58533421D4C76C300FFE639 /* sensorTagKeyService.h */,
+				A58533431D4C76C300FFE639 /* sensorTagKeyService.m */,
+				A58533441D4C76C300FFE639 /* sensorTagLightService.h */,
+				A58533451D4C76C300FFE639 /* sensorTagLightService.m */,
+				A58533461D4C76C300FFE639 /* sensorTagMovementService.h */,
+				A58533471D4C76C300FFE639 /* sensorTagMovementService.m */,
+				A585333A1D4C76A600FFE639 /* sensorTagAirPressureService.h */,
+				A585333B1D4C76A600FFE639 /* sensorTagAirPressureService.m */,
+				A585333C1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.h */,
+				A585333D1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.m */,
 				61FF0AF11C1014E90087FEAD /* sensor */,
 				61FF270B1BE21EEC002D1E7C /* Macros.h */,
 				610C08CE1BDF4ED400CF8BE0 /* AppDelegate.h */,
@@ -843,39 +890,48 @@
 			buildActionMask = 2147483647;
 			files = (
 				614E27E61BE0C76100E858D4 /* NameShutterTableViewCell.m in Sources */,
+				A58533511D4C777600FFE639 /* bluetoothHandler.m in Sources */,
 				610C08D31BDF4ED400CF8BE0 /* ViewController.m in Sources */,
 				610E67F61C608D1C0095137A /* ShuttrTableCell.m in Sources */,
+				A58533481D4C76C300FFE639 /* sensorTagHumidityService.m in Sources */,
 				61F567871C05D5E0006A2766 /* deviceSelector.m in Sources */,
 				619CE4851D1A873800B2A34D /* MBProgressHUD.m in Sources */,
 				61F5678D1C05D62D006A2766 /* SensorTagApplicationViewController.m in Sources */,
+				A585334E1D4C774600FFE639 /* bleGenericService.m in Sources */,
 				6101A1531CDB6EEF00D9148C /* UIViewController+logging.m in Sources */,
+				A58533491D4C76C300FFE639 /* sensorTagKeyService.m in Sources */,
 				61FB23D01BE0980B0025E869 /* MainViewController.m in Sources */,
 				610E67F31C608C3D0095137A /* ShuttrViewController.m in Sources */,
 				6101AF2E1BE9CF9700E1785F /* shutter.m in Sources */,
 				615AC3D31BDF94B500D0A9C6 /* NameShutterViewController.m in Sources */,
 				610F33E51C63317800B8DF5A /* PresetDetailTableCell.m in Sources */,
 				61F6CB2C1C05D6DC00D54C19 /* deviceCellTemplate.m in Sources */,
+				A585334A1D4C76C300FFE639 /* sensorTagLightService.m in Sources */,
 				610E67EA1C607D1A0095137A /* PresetViewContoller.m in Sources */,
 				61428BB71BEB967000403946 /* PresetView.m in Sources */,
 				61F530DD1CE4654F00FFEF63 /* CustomSensor.m in Sources */,
 				610C08D01BDF4ED400CF8BE0 /* AppDelegate.m in Sources */,
 				61FED5401BEB25A6006C67D3 /* iCarousel.m in Sources */,
 				61F6CB291C05D6C900D54C19 /* BLEUtility.m in Sources */,
+				A58533541D4C77DD00FFE639 /* sensorFunctions.m in Sources */,
 				618EDC321BE37A7C00C0DD83 /* TimeViewController.m in Sources */,
 				610E67F01C6082F70095137A /* PresetDetailVC.m in Sources */,
 				61F567841C05D59E006A2766 /* BLEDevice.m in Sources */,
 				61E1695E1BE8B13100BB7FAA /* ShutterBackgroundView.m in Sources */,
 				61E169581BE8857100BB7FAA /* ShutterView.m in Sources */,
 				610DF7171C5F6636002E6B47 /* shutterTableView.m in Sources */,
+				A585333E1D4C76A600FFE639 /* sensorTagAirPressureService.m in Sources */,
 				615AC3D61BDF958800D0A9C6 /* SideBarViewController.m in Sources */,
 				61B1D9FC1D336C4E00429935 /* Preset.m in Sources */,
 				610C08CD1BDF4ED400CF8BE0 /* main.m in Sources */,
 				614E28041BE0E8D200E858D4 /* ShutterPresetcrollerViewController.m in Sources */,
 				618EDC2F1BE36ACD00C0DD83 /* TutorialViewController.m in Sources */,
 				61AD5D9D1D054A9800A6AA9F /* PresetCommand.m in Sources */,
+				A585333F1D4C76A600FFE639 /* sensorTagAmbientTemperatureService.m in Sources */,
 				6100C87C1C7C1EC600A30E4A /* ShutterBackgroundViewController.m in Sources */,
 				61F5678A1C05D60F006A2766 /* Sensors.m in Sources */,
 				610E67ED1C607F460095137A /* PresetTableCustomCell.m in Sources */,
+				A585334B1D4C76C300FFE639 /* sensorTagMovementService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
