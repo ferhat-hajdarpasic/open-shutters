@@ -52,55 +52,20 @@ int accRange = 0;
 
 }
 
--(void)StagNames
-{
-    for(CBPeripheral *p  in self.sensorTags) {
-        p.delegate=self;
-        NSUUID* serverId = [p identifier];
-        if (offf==YES){ }
-        NSLog(@"serverId MAC ADDRESS %@",serverId.UUIDString);
-        [self.instrummetList addObject:p.identifier.UUIDString];
-    }
-    if (self.sensorTags.count>0) {
-        if ([readDevice isEqualToString:@"readDEV"]) {
-            [self performSelector:@selector(connectCommand) withObject:self afterDelay:3.1];
-            if([self.delegate respondsToSelector:@selector(devicesFound:)]) {
-                [self.delegate devicesFound:self.instrummetList];
-            }
-        } else  if ([readDevice isEqualToString:@"READPRESET"]) {
-        } else {
-            self.response_Arr=[[NSMutableArray alloc]init];
-            [self performSelector:@selector(connectClockID) withObject:self afterDelay:2.9f];
-        }
-    }
-}
-
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
 {
     r=0;
     globalcounttp=0;
     offf=onnn;
     arrCHARCTERCITS= [[NSMutableDictionary alloc]init];
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(StagNames)
-//                                                 name:@"stopscanning"
-//                                               object:nil];
-  
     self.writeCommandArr=[[NSMutableArray alloc]initWithObjects:@"0901",@"0200",@"0900",@"04",@"03",@"0801",@"0800", nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                                  selector:@selector(SystmCommandWrite:)
-                                                      name:@"SYSTEMCommand"
-                                                    object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(SystmCommandWrite:) name:@"SYSTEMCommand" object:nil];
    
     greenindexxx=0;
     self.isUP=NO;
     self.isDown=NO;
     self.instrummetList=[[NSMutableArray alloc]init];
     self.response_Arr=[[NSMutableArray alloc]init];
-    //    IRTemperatureServiceUUID= [CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"];
-//    IRTemperatureDataUUID       = [CBUUID UUIDWithString:@"F000AA01-0451-4000-B000-000000000000"];
-//    IRTemperatureConfigUUID     = [CBUUID UUIDWithString:@"F000AA02-0451-4000-B000-000000000000"];
     
     IOServiceUUID    = [CBUUID UUIDWithString:@"F000AA64-0451-4000-B000-000000000000"];
     IODataUUID       = [CBUUID UUIDWithString:@"F000AA65-0451-4000-B000-000000000000"];
@@ -110,48 +75,29 @@ int accRange = 0;
     self.sensorTags = [[NSMutableArray alloc]init];
     self.m.delegate = self;
 
-   ////
-    myPeripheralManager =
-    [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+    myPeripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
     
     _data = [[NSMutableData alloc] init];
 
-   //[myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]] }];
-
     connectP=connect;
     readDevice=psss;
-    //[self connect:NO UUID:UNIQUEID presetshutter:psss on:onnn];
-  
-
 }
--(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
-{
+
+-(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn {
     r=0;
-    for(CBPeripheral *p  in self.sensorTags){
-        
+    for(CBPeripheral *p  in self.sensorTags) {
         p.delegate=self;
         NSUUID* serverId = [p identifier];
-       
-        if (onnn && [serverId.UUIDString isEqualToString:UNIQUEID]){
-            
+        if (onnn && [serverId.UUIDString isEqualToString:UNIQUEID]) {
             [self.m connectPeripheral:p options:nil];
-            
-        }
-        else{
-        
-            
+        } else {
             [self.m cancelPeripheralConnection:p];
-
-        
         }
-        
         NSLog(@"serverId MAC ADDRESS %@",serverId.UUIDString);
-        
         [self.instrummetList addObject:p.identifier.UUIDString];
-        
     }
-    
 }
+
 -(void)readPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
 {
     r=0;
@@ -247,31 +193,23 @@ int accRange = 0;
    // [self readPreset];
 }
 
--(void)SystmCommandWrite:(NSNotification *)notify
-{
+-(void)SystmCommandWrite:(NSNotification *)notify {
     NSDictionary *dict=notify.userInfo;
     NSLog(@"notify %@",notify.userInfo);
-
     for(CBPeripheral *p  in self.sensorTags) {
-        
-        
-        //p.delegate=self;
-        
         NSUUID* serverId = [p identifier];
-    
         if([[dict valueForKey:@"uuid"] isEqualToString:serverId.UUIDString]) {
-        
-        [self.m connectPeripheral:p options:nil];
-        p.delegate=self;
-        greenindexxx=0;
-        [self performSelector:@selector(callSytemID:) withObject:dict afterDelay:5.0f];
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
+            [self.m connectPeripheral:p options:nil];
+            p.delegate=self;
+            greenindexxx=0;
+            [self performSelector:@selector(callSytemID:) withObject:dict afterDelay:5.0f];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-        break;
+            break;
        
+            }
         }
     }
-}
 -(int)scanValue:(NSString *)valll
 {
     
@@ -910,79 +848,51 @@ int accRange = 0;
     }
 
 }
+
 -(void)connectCommand
 {
     if (offf==YES){
-        
-        if (IOCharacteristic != nil){
-            
+        if (IOCharacteristic != nil) {
             offf=NO;
             if (r<self.sensorTags.count) {
-                
-                CBPeripheral *p=[self.sensorTags objectAtIndex:r];
-                
-                ReadTime=[NSTimer scheduledTimerWithTimeInterval:0.01
-                                                          target:self
-                                                        selector:@selector(readSytemID:)
-                                                        userInfo:p
-                                                         repeats:YES];
-                
-            }
-            
+                //CBPeripheral *p=[self.sensorTags objectAtIndex:r];
+                //ReadTime=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(readSytemID:) userInfo:p repeats:YES];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];            }
         }
-        
     }
 }
 
--(void)readSytemID:(NSTimer*)theTimer
-{
-    
+-(void)connectCommand1 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+}
+
+-(void)readSytemID:(NSTimer*)theTimer {
     CBPeripheral *p=[theTimer userInfo];
     IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
-    
-    // [p setDelegate:self];
-    //[self.m connectPeripheral:p options:nil];
-
-    if(greenindexxx<4)
-    {
-        //NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x09],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0xff],nil];
+    if(greenindexxx<4) {
         NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x09],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0xff],nil];
-            
         int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
         greenindexxx++;
-            
+    } else {
+        [ReadTime invalidate];
+        ReadTime=nil;
+        greenindexxx=0;
+        offf=YES;
+        NSInteger rr= [self.sensorTags count];
+        if (r<rr) {
+            r++;
+            [self connectCommand];
         }
-   else{
-       
-            /////04010105 0f0f4d4f 47000000 00000000 0000>
-            
-            [ReadTime invalidate];
-            ReadTime=nil;
-            greenindexxx=0;
-            offf=YES;
-        
-            NSInteger rr= [self.sensorTags count];
-            if (r<rr) {
-                r++;
-                [self connectCommand];
-            }
-           
-            
-        }
-
+    }
 }
--(void)callSytemID:(NSDictionary*)dict
-{
 
-    ttt1=[NSTimer scheduledTimerWithTimeInterval:0.01
-                                      target:self
-                                    selector:@selector(callSytemIDddd:)
-                                    userInfo:dict
-                                     repeats:YES];
+-(void)callSytemID:(NSDictionary*)dict {
+    ttt1=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(callSytemIDddd:) userInfo:dict repeats:YES];
 }
+
 -(void)callSytemIDddd:(NSTimer*)theTimer
 {
     
@@ -1322,240 +1232,114 @@ int accRange = 0;
     
 }
 #pragma mark - SENSOR TAG BLE DELEGATES
--(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-   
-    if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_DATA]]){
-    
+-(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+    if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_DATA]]) {
         NSLog(@"peripheral updated value is %@  ///%@",peripheral,characteristic.value);
-        NSString * hexStr = [NSString stringWithFormat:@"%@",
-                            characteristic.value];
+        NSString * hexStr = [NSString stringWithFormat:@"%@", characteristic.value];
+        hexStr = [hexStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
+        hexStr = [hexStr stringByReplacingOccurrencesOfString:@">" withString:@""];
+        hexStr = [hexStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSString *writeCommd=[hexStr substringToIndex:4];
+        hexStr=[hexStr substringFromIndex:4];
        
-
-       //for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">",@" ",nil])
-       hexStr = [hexStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
-       hexStr = [hexStr stringByReplacingOccurrencesOfString:@">" withString:@""];
-       hexStr = [hexStr stringByReplacingOccurrencesOfString:@" " withString:@""];
-       NSString *writeCommd=[hexStr substringToIndex:4];
-       hexStr=[hexStr substringFromIndex:4];
-       
-       NSString *realstrr=[self
+        NSString *realstrr=[self
                            stringFromHexString:hexStr];
-       NSLog(@"realstrr%@", realstrr);
-       if ([writeCommd isEqualToString:@"0901"]) {
-           
+        NSLog(@"realstrr%@", realstrr);
+        if ([writeCommd isEqualToString:@"0901"]) {
            if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]) {
-            [self.m cancelPeripheralConnection:peripheral];
-       
-//       NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
-//       [defff setObject:characteristic.value forKey:@"Michaeldata"];
-//       [defff synchronize];
-
-       NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
-       NSLog(@"DevicesNamedList value is %@", [userDeafult  valueForKey:DevicesNamedList]);
-       NSMutableDictionary *diccttt=[userDeafult  objectForKey:DevicesNamedList];
-    
-    for(id key in diccttt){
-        
-        NSLog(@"key: %@, value: %@", key, [diccttt objectForKey:key]);
-        
-        if ([key isEqualToString:peripheral.identifier.
-                UUIDString]) {
-               
-            
-            if(diccttt.count>0) {
-                   
-
-                
-                   if (realstrr){
-                       
-                       NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
-                       dictionary_devices=[diccttt mutableCopy];
-                       [dictionary_devices setValue:realstrr forKey:key];
-                       [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
-                       [userDeafult synchronize];
-
-                       [[NSNotificationCenter defaultCenter]
-                        postNotificationName:@"tableAftrWrite"
-                        object:self userInfo:nil];
-                       
-
-
-                   }
-                   else{
-                   
-                       [[NSNotificationCenter defaultCenter]
-                        postNotificationName:@"tableAftrWrite"
-                        object:self userInfo:nil];
-                       
-
-                   }
-                   
-               }
-        }
-      }
-    }
-      
-  }
-      
-else  if([writeCommd isEqualToString:@"0900"]) {
-    
-    
-        if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]){
-                [self.m cancelPeripheralConnection:peripheral];
-               // globalcounttp++;
-                    NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
-//               [defff setObject:characteristic.value forKey:@"Michaeldata"];
-//               [defff synchronize];
-            [self.response_Arr addObject:peripheral];
+               [self.m cancelPeripheralConnection:peripheral];
                NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
                NSLog(@"DevicesNamedList value is %@", [userDeafult  valueForKey:DevicesNamedList]);
-               NSMutableDictionary *diccttt= [userDeafult  objectForKey:DevicesNamedList];
-                 NSLog(@"dicctttdiccttt %@", diccttt);
-              for (id key in diccttt) {
+               NSMutableDictionary *diccttt=[userDeafult  objectForKey:DevicesNamedList];
+               for(id key in diccttt){
                    NSLog(@"key: %@, value: %@", key, [diccttt objectForKey:key]);
-                   if ([key isEqualToString:peripheral.identifier.
-                        UUIDString]) {
-                       if (diccttt.count>0) {
-                           
-                           
-                          // if([[diccttt objectForKey:key] isEqualToString:@""]||[diccttt objectForKey:key]==[NSNull null])
-                          // {
-                               if (realstrr!=nil && ![realstrr containsString:@"ABCDEFGHabcdef"]) {
-                                   
-                                  NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
-                                   dictionary_devices=[diccttt mutableCopy];
-                                   [dictionary_devices setValue:realstrr forKey:key];
-                                   [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
-                                   [userDeafult synchronize];
-                                  NSLog(@"dictionary_devices %@", dictionary_devices);
-                                   if (self.response_Arr.count==self.sensorTags.count) {
-                                       self.response_Arr=nil;
-                                       r=0;
-                                       [[NSNotificationCenter defaultCenter]
-                                        postNotificationName:@"tableAftrRead"
-                                        object:self userInfo:nil];
-
-                                  
-                               }
-                                 
-                                   
-                             //  }
-                               
-                           }
-                           else{
-                               if (self.response_Arr.count==self.sensorTags.count) {
-                                   self.response_Arr=nil;
-                                   r=0;
-                                   [[NSNotificationCenter defaultCenter]
-                                    postNotificationName:@"tableAftrRead"
-                                    object:self userInfo:nil];
-
-                               }
+                   if ([key isEqualToString:peripheral.identifier.UUIDString]) {
+                       if(diccttt.count>0) {
+                           if (realstrr) {
                                NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
                                dictionary_devices=[diccttt mutableCopy];
-                               [dictionary_devices setValue:@"" forKey:key];
+                               [dictionary_devices setValue:realstrr forKey:key];
                                [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
                                [userDeafult synchronize];
-                              
-                               NSLog(@"dictionary_devices %@", dictionary_devices);
 
-                               
+                               [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
+                           } else {
+                               [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
                            }
-                           
                        }
                    }
                }
            }
-           
-       }
-        
-else  if([writeCommd containsString:@"0801"]){
-    
-    
-    if (![hexStr containsString:@"000000000000000000000000000000000000"] ){
-        
-        // globalcounttp++;
-        [self.m cancelPeripheralConnection:peripheral];//               NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
-        //               [defff setObject:characteristic.value forKey:@"Michaeldata"];
-        //               [defff synchronize];
-        [self.response_Arr addObject:peripheral];
-        NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
-                      //  if (self.response_Arr.count==self.sensorTags.count) {
-                             self.response_Arr=nil;
-                            [[NSNotificationCenter defaultCenter]
-                             postNotificationName:@"clockReadFinished"
-                             object:self userInfo:nil];
-
-//                            [[NSNotificationCenter defaultCenter]
-//                             postNotificationName:@"tableAftrRead"
-//                             object:self userInfo:characteristic.value];
-                            
-                            
-                           // }
-                        
-        
-    
+        } else  if([writeCommd isEqualToString:@"0900"]) {
+            if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]) {
+                [self.m cancelPeripheralConnection:peripheral];
+                NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
+                [self.response_Arr addObject:peripheral];
+                NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
+                NSLog(@"DevicesNamedList value is %@", [userDeafult  valueForKey:DevicesNamedList]);
+                NSMutableDictionary *diccttt= [userDeafult  objectForKey:DevicesNamedList];
+                NSLog(@"dicctttdiccttt %@", diccttt);
+                for (id key in diccttt) {
+                    NSLog(@"key: %@, value: %@", key, [diccttt objectForKey:key]);
+                    if ([key isEqualToString:peripheral.identifier.UUIDString]) {
+                        if (diccttt.count>0) {
+                            if (realstrr!=nil && ![realstrr containsString:@"ABCDEFGHabcdef"]) {
+                                NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
+                                dictionary_devices=[diccttt mutableCopy];
+                                [dictionary_devices setValue:realstrr forKey:key];
+                                [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
+                                [userDeafult synchronize];
+                                NSLog(@"dictionary_devices %@", dictionary_devices);
+                                if (self.response_Arr.count==self.sensorTags.count) {
+                                    self.response_Arr=nil;
+                                    r=0;
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+                                }
+                            } else {
+                                if (self.response_Arr.count==self.sensorTags.count) {
+                                    self.response_Arr=nil;
+                                    r=0;
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+                                }
+                                NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
+                                dictionary_devices=[diccttt mutableCopy];
+                                [dictionary_devices setValue:@"" forKey:key];
+                                [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
+                                [userDeafult synchronize];
+                                NSLog(@"dictionary_devices %@", dictionary_devices);
+                            }
+                        }
+                    }
                 }
-
-    
-    
-}
-else  if([writeCommd containsString:@"0800"]){
-    
-    
-    if (![hexStr containsString:@"000000000000000000000000000000000000"] ){
-        
-        // globalcounttp++;
-        [self.m cancelPeripheralConnection:peripheral];//               NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
-        //               [defff setObject:characteristic.value forKey:@"Michaeldata"];
-        //               [defff synchronize];
-        [self.response_Arr addObject:peripheral];
-        NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
-        //  if (self.response_Arr.count==self.sensorTags.count) {
-        self.response_Arr=nil;
-        [[NSNotificationCenter defaultCenter]
-         postNotificationName:@"clockReadFinished"
-         object:self userInfo:nil];
-        
-        //                            [[NSNotificationCenter defaultCenter]
-        //                             postNotificationName:@"tableAftrRead"
-        //                             object:self userInfo:characteristic.value];
-        
-        
-        // }
-        
-        
-        
-    }
-    
-    
-    
-}
-
-else if ([writeCommd isEqualToString:@"0200"])
-    
-{
-    
+            }
+        } else  if([writeCommd containsString:@"0801"]) {
+            if (![hexStr containsString:@"000000000000000000000000000000000000"] ) {
+                [self.m cancelPeripheralConnection:peripheral];
+                [self.response_Arr addObject:peripheral];
+                NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
+                self.response_Arr=nil;
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
+            }
+        } else  if([writeCommd containsString:@"0800"]) {
+            if (![hexStr containsString:@"000000000000000000000000000000000000"] ){
+                [self.m cancelPeripheralConnection:peripheral];
+                [self.response_Arr addObject:peripheral];
+                NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
+                self.response_Arr=nil;
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
+            }
+        } else if ([writeCommd isEqualToString:@"0200"]) {
            NSString *motorValue=[hexStr substringToIndex:2];
            //hexStr=[motorValue substringFromIndex:2];
            int hex=[motorValue intValue];
            NSLog(@"motorrrrrr val is %d",hex);
            if (offf==YES) {
-               if([self.delegate respondsToSelector:@selector(readMotorValue:)])
-               {
-                   
+               if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
                    [self.delegate readMotorValue:hex];
-                   
-
                }
                offf=NO;
            }
-
-        
-        }
-    else  if([writeCommd containsString:@"04"]){
-    
+        } else  if([writeCommd containsString:@"04"]) {
         if (![hexStr containsString:@"00000000000000000000000000000000"]){
         
          
@@ -1697,10 +1481,35 @@ else if ([writeCommd isEqualToString:@"0200"])
         [self.sensorTags addObject:peripheral];
         [peripheral setDelegate:self];
         [self.m connectPeripheral:peripheral options:nil];
+        
+        peripheral.delegate = self;
+        [self.instrummetList addObject:peripheral.identifier.UUIDString];
+        if([self.delegate respondsToSelector:@selector(devicesFound:)]) {
+            [self.delegate devicesFound:self.instrummetList];
+        }
+        [self performSelector:@selector(connectCommand1) withObject:self afterDelay:1];
+
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
     }
     
-    NSLog(@"self.sensorTags %@",self.sensorTags);
-    [self StagNames];
+//    for(CBPeripheral *p  in self.sensorTags) {
+//        p.delegate = self;
+//        [self.instrummetList addObject:p.identifier.UUIDString];
+//    }
+//    if (self.sensorTags.count > 0) {
+//        if ([readDevice isEqualToString:@"readDEV"]) {
+//            [self performSelector:@selector(connectCommand) withObject:self afterDelay:3.1];
+//            if([self.delegate respondsToSelector:@selector(devicesFound:)]) {
+//                [self.delegate devicesFound:self.instrummetList];
+//            }
+//        } else  if ([readDevice isEqualToString:@"READPRESET"]) {
+//        } else {
+//            self.response_Arr=[[NSMutableArray alloc]init];
+//            [self performSelector:@selector(connectClockID) withObject:self afterDelay:2.9f];
+//        }
+//    };
 }
 
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{

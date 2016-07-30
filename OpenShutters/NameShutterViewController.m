@@ -66,10 +66,6 @@
 
 -(void)reloadTable:(NSNotification *)notify {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-    [self performSelector:@selector(loadclock) withObject:self afterDelay:0.0];
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Clock sync...";
-    [hud show:YES];
     [table_shutter reloadData];
 }
 
@@ -365,22 +361,7 @@ else
     }
 
 }
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range     replacementString:(NSString *)string
-{
-//     NameShutterTableViewCell *cell=(NameShutterTableViewCell *)[table_shutter cellForRowAtIndexPath:indxx];
-//    if (textField==cell.fld_room && range.length==0)
-//    {
-//        
-//        cell.name.text=cell.fld_room.text;
-//        
-//    }
-//    else  if (textField==cell.fld_shuter && range.length==0)
-//    {
-//        cell.shutter_name.text=cell.fld_shuter.text;
-//    
-//        
-//    }
-//
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range     replacementString:(NSString *)string {
     return YES;
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
