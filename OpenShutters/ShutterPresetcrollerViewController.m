@@ -1106,17 +1106,13 @@
     
    
 }
--(void)movingShutterMovementDown:(NSString *)data
-{
-   
-    //[csensor lightGreenOff];
+-(void)movingShutterMovementDown:(NSString *)data {
     NSLog(@"RED LIGHT ON");
-    if(!csensor.isUP){
-        
+    if(!csensor.isUP) {
         [csensor lightGreenOn:data];
-        
     }
 }
+
 -(void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

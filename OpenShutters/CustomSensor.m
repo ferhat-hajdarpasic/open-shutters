@@ -1,10 +1,3 @@
-
-//  VerifyMobile.m
-//  Unninr
-//  Created by Sharad Thapa on 23/04/15.
-//  Copyright (c) 2015 Sharad Thapa. All rights reserved.
-
-
 #import "CustomSensor.h"
 #import "Macros.h"
 #import "Preset.h"
@@ -54,13 +47,14 @@ int accRange = 0;
 
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
 {
-    r=0;
+    r = 0;
     globalcounttp=0;
     offf=onnn;
     arrCHARCTERCITS= [[NSMutableDictionary alloc]init];
     self.writeCommandArr=[[NSMutableArray alloc]initWithObjects:@"0901",@"0200",@"0900",@"04",@"03",@"0801",@"0800", nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(SystmCommandWrite:) name:@"SYSTEMCommand" object:nil];
-   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ConnectWithServices:) name:@"ConnectWithServices" object:nil];    
+    
     greenindexxx=0;
     self.isUP=NO;
     self.isDown=NO;
@@ -83,7 +77,7 @@ int accRange = 0;
 }
 
 -(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn {
-    r=0;
+    r = 0;
     for(CBPeripheral *p  in self.sensorTags) {
         p.delegate=self;
         NSUUID* serverId = [p identifier];
@@ -99,7 +93,7 @@ int accRange = 0;
 
 -(void)readPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
 {
-    r=0;
+    r = 0;
     prestcount=1;
     self.readPresetArr=[[NSMutableArray alloc]init];
     globalcounttp=0;
@@ -139,7 +133,7 @@ int accRange = 0;
     
     //[myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]] }];
     
-    r=0;
+    r = 0;
     readDevice=psss;
   [self performSelector:@selector(readPreset) withObject:self afterDelay:3.0];
     // [self readPreset];
@@ -186,7 +180,7 @@ int accRange = 0;
     //[myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]] }];
     
     
-    r=0;
+    r = 0;
  // [self performSelector:@selector(connectClockID) withObject:self afterDelay:5.0];
    // [self readPreset];
 }
@@ -197,17 +191,23 @@ int accRange = 0;
     for(CBPeripheral *p  in self.sensorTags) {
         NSUUID* serverId = [p identifier];
         if([[dict valueForKey:@"uuid"] isEqualToString:serverId.UUIDString]) {
-            [self.m connectPeripheral:p options:nil];
-            p.delegate=self;
+            //[self connnectAndDiscoverServices:p];
+            //p.delegate=self;
             greenindexxx=0;
-            [self performSelector:@selector(callSytemID:) withObject:dict afterDelay:5.0f];
+            [self performSelector:@selector(callSytemID:) withObject:dict afterDelay:0.1f];
             [[NSNotificationCenter defaultCenter] removeObserver:self];
-
             break;
-       
-            }
         }
     }
+}
+
+-(void)ConnectWithServices:(NSNotification *)notify {
+    for(CBPeripheral *p  in self.sensorTags) {
+        p.delegate=self;
+        [self connnectAndDiscoverServices:p];
+    }
+}
+
 -(int)scanValue:(NSString *)valll
 {
     
@@ -395,47 +395,26 @@ int accRange = 0;
 
     NSLog(@"preseTableCatgry %@",preseTableCatgry);
 }
--(void)readPreset
-{
-    
-    if(IOCharacteristic != nil){
-        
+
+-(void)readPreset {
+    if(IOCharacteristic != nil) {
         [ttt invalidate];
-        if (offf==YES){
-            
-        if(IOCharacteristic != nil){
-            
+        if (offf==YES) {
+        if(IOCharacteristic != nil) {
             offf=NO;
-            
-            // for(int i=0;i<self.sensorTags.count;i++) {
-            if (r<self.sensorTags.count) {
-                   
-                    CBPeripheral *p=[self.sensorTags objectAtIndex:r];
-                     [self performSelector:@selector(PRESETINFO:) withObject:p afterDelay:3.0];
-                    
-                 
-                    
-                    
-                }
-                else{
-                    
-                    
-                    [self caliberatePreset];
-                    
-                    NSLog(@"THE READ PRESET ARRAY IS %@",self.readPresetArr);
-                    [[NSNotificationCenter defaultCenter]
-                     postNotificationName:@"readPresetEND"
-                     object:self userInfo:nil];
-                
-                
+            if (r < self.sensorTags.count) {
+                CBPeripheral *p=[self.sensorTags objectAtIndex:r];
+                [self performSelector:@selector(PRESETINFO:) withObject:p afterDelay:3.0];
+            } else {
+                [self caliberatePreset];
+                NSLog(@"THE READ PRESET ARRAY IS %@",self.readPresetArr);
+                [[NSNotificationCenter defaultCenter]
+                postNotificationName:@"readPresetEND"
+                object:self userInfo:nil];
                 }
             }
-            
-            
         }
-        
     }
-    
 }
 
 - (void)connnectAndDiscoverServices:(CBPeripheral *)p {
@@ -463,7 +442,6 @@ int accRange = 0;
         }
     }
 }
-
 
 -(void)MotorReadDate:(CBPeripheral*)UNIQUEID
 {
@@ -496,6 +474,7 @@ int accRange = 0;
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [P writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Get message from motor data: %@", [writeValueIO description]);
         greenindexxx++;
     }
     else
@@ -521,6 +500,7 @@ int accRange = 0;
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Preset data: %@", [writeValueIO description]);
         greenindexxx++;
        
     }
@@ -594,7 +574,7 @@ int accRange = 0;
         // NSString*checkStr=[theTimer userInfo];
         NSUInteger length = [checkStr length]/2;
         NSInteger lengthcount= length +8;
-        NSLog(@"lengthcount%ld",(long)lengthcount);
+        //NSLog(@"lengthcount%ld",(long)lengthcount);
         BOOL collision=NO;
         if ([checkStr length]>24)
         {
@@ -632,7 +612,7 @@ int accRange = 0;
                     int ddd=[self scanValue:hexxxx];
                     [array addObject:[NSNumber numberWithInt:ddd]];
                     i+=2;
-                    NSLog(@"Output%@",array);
+                    //NSLog(@"Output%@",array);
                     
                 }
         
@@ -695,7 +675,8 @@ int accRange = 0;
         //char* bytes = (char*)&valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [pp writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
-        greenindexxx++;
+        NSLog(@"Write preset data: %@", [writeValueIO description]);
+                greenindexxx++;
           
             }
         
@@ -715,45 +696,20 @@ int accRange = 0;
         }
     
 }
--(void)clockread:(CBPeripheral*)peripheral
-{
-    
-    
+
+-(void)clockread:(CBPeripheral*)peripheral {
 }
 
--(void)connectClockID
-{
-    
-        if (IOCharacteristic != nil){
-            
-            clockUpadte=true;
-            if (r<self.sensorTags.count) {
-                
-                CBPeripheral *p=[self.sensorTags objectAtIndex:r];
-                
-               // [self.m connectPeripheral:p options:nil];
-               // p.delegate=self;
-                //greenindexxx=0;
-                ttt=[NSTimer scheduledTimerWithTimeInterval:0.01
-                     
-                                                     target:self
-                                                   selector:@selector(clocIdCommand:)
-                                                   userInfo:p
-                                                    repeats:YES];
-
-
-                
-
-                           }
-            else
-            {
-            
-                NSLog(@"the rrrr is fulll");
-            }
-            
+-(void)connectClockID {
+    if (IOCharacteristic != nil) {
+        clockUpadte = true;
+        if (r < self.sensorTags.count) {
+            CBPeripheral *p=[self.sensorTags objectAtIndex:r];
+            ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(clocIdCommand:) userInfo:p repeats:YES];
+        } else {
+            NSLog(@"the rrrr is fulll");
         }
-        
-    
+    }
 }
 
 
@@ -770,12 +726,12 @@ int accRange = 0;
    
     // NSString *yrr=[sttr substringFromIndex:2];
    // NSString*  command= [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)0x0a]];
-      NSString*  day = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components day]]];
+    NSString* day = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components day]]];
     NSString* month = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components month]]];
     NSString* year = [self gethexfrmDec:[NSString stringWithFormat:@"%@",sttr]];
-    NSString * hrr = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components hour]]];
-    NSString * min = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components minute]]];
-    NSString * secc =[self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components second]]];
+    NSString* hrr = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components hour]]];
+    NSString* min = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components minute]]];
+    NSString* secc =[self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components second]]];
    
     //NSString *string = [NSString stringWithFormat:@"%ld.%ld.%ld", (long)day, (long)month, (long)year];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
@@ -788,58 +744,33 @@ int accRange = 0;
     [dateFormatter setDateFormat:@"EEEE"];
     
     NSDate *now = [[NSDate alloc] init];
-    NSString *theDate = [dateFormat stringFromDate:now];
-    NSString *dateString = [format stringFromDate:now];
-    NSString *theTime = [timeFormat stringFromDate:now];
-    
     NSString *weeks = [dateFormatter stringFromDate:now];
-//    NSLog(@"\n"
-//          "theDate: |%@| \n"
-//          "theTime: |%@| \n"
-//          "Now: |%@| \n"
-//          "Week: |%@| \n"
-//          , theDate, theTime,dateString,weeks);
-    NSString *  weekday =[self gethexfrmDec
-                          :[NSString stringWithFormat:@"%@",weeks]];
     
-    if(greenindexxx<20){
-       
-        //int commm=[self scanValue:@"0x0A"];
+    if(greenindexxx < 10){
         int dayValue=[self scanValue:day];
         int monthValue=[self scanValue:month];
         int yearValue=[self scanValue:year];
         int hrrValue=[self scanValue:hrr];
         int minValue=[self scanValue:min];
         int seccValue=[self scanValue:secc];
-        //NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:2],[NSNumber numberWithInt:0xff],nil];
-        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x08],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:dayValue],[NSNumber numberWithInt:monthValue],[NSNumber numberWithInt:yearValue],[NSNumber numberWithInt:seccValue],[NSNumber numberWithInt:hrrValue],[NSNumber numberWithInt:minValue],[NSNumber numberWithInt:0xff],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0xff],nil];
+        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x08],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:dayValue],[NSNumber numberWithInt:monthValue],[NSNumber numberWithInt:yearValue],[NSNumber numberWithInt:seccValue],[NSNumber numberWithInt:hrrValue],[NSNumber numberWithInt:minValue],[NSNumber numberWithInt:0xff],nil];
         
         int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Clock data: %@", [writeValueIO description]);
         greenindexxx++;
-     ////get it done to always
-        
-    }
-    else{
-        
-        /////04010105 0f0f4d4f 47000000 00000000 0000>
-        
+    } else {
         [ttt invalidate];
         ttt=nil;
         greenindexxx=0;
-       
-        
         NSInteger rr= [self.sensorTags count];
-        if (r<rr) {
+        if (r < rr) {
             r++;
-            [self connectClockID];
+            //[self connectClockID];
         }
-        
-        
     }
-
 }
 
 -(void)connectCommand
@@ -847,10 +778,9 @@ int accRange = 0;
     if (offf==YES){
         if (IOCharacteristic != nil) {
             offf=NO;
-            if (r<self.sensorTags.count) {
-                //CBPeripheral *p=[self.sensorTags objectAtIndex:r];
-                //ReadTime=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(readSytemID:) userInfo:p repeats:YES];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];            }
+            if (r < self.sensorTags.count) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+            }
         }
     }
 }
@@ -864,6 +794,7 @@ int accRange = 0;
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Reada system id: %@", [writeValueIO description]);
         greenindexxx++;
     } else {
         [ReadTime invalidate];
@@ -871,7 +802,7 @@ int accRange = 0;
         greenindexxx=0;
         offf=YES;
         NSInteger rr= [self.sensorTags count];
-        if (r<rr) {
+        if (r < rr) {
             r++;
             [self connectCommand];
         }
@@ -882,56 +813,31 @@ int accRange = 0;
     ttt1=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(callSytemIDddd:) userInfo:dict repeats:YES];
 }
 
--(void)callSytemIDddd:(NSTimer*)theTimer
-{
-    
+-(void)callSytemIDddd:(NSTimer*)theTimer {
     NSDictionary *dic=[theTimer userInfo];
-    //[dic enumerateKeysAndObjectsUsingBlock: ^(NSString *key, NSString *object, BOOL *stop) {
-        
     for(CBPeripheral *p  in self.sensorTags) {
-        
-        
-            //p.delegate=self;
-            NSUUID* serverId = [p identifier];
-        
-            if ([[dic valueForKey:@"uuid"] isEqualToString:serverId.UUIDString]) {
-                
-               // long indxx=[self.sensorTags indexOfObject:p];
-               IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
-                NSString *vall=[dic valueForKey:serverId.UUIDString];
-                NSString *checkStr=[self gethex:vall];
-               // NSString*checkStr=[theTimer userInfo];
-                NSUInteger length = [checkStr length]/2;
-                NSInteger lengthcount= length +4;
-                NSLog(@"lengthcount%ld",(long)lengthcount);
-                
-                if ([checkStr length]>32)
-                {
-                    
-                    UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
+        NSUUID* serverId = [p identifier];
+        if ([[dic valueForKey:@"uuid"] isEqualToString:serverId.UUIDString]) {
+            IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
+            NSString *vall=[dic valueForKey:serverId.UUIDString];
+            NSString *checkStr=[self gethex:vall];
+            NSUInteger length = [checkStr length]/2;
+            NSInteger lengthcount= length +4;
+            //NSLog(@"lengthcount=%ld",(long)lengthcount);
+            if ([checkStr length]>32) {
+                UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
                                                                      message:@"You have reached maximum limit!"
                                                                     delegate:self
                                                            cancelButtonTitle:@"Cancel"
                                                            otherButtonTitles: nil];
-                    
-                    
-                    [alert show];
-                    
-                }
-                else
-                    
-                {
-                    
-                
-                if(greenindexxx<lengthcount)
-                
-                {
+                [alert show];
+            } else {
+                if(greenindexxx<lengthcount) {
                     NSMutableArray *array = [[NSMutableArray array]init];
                     NSString * str = checkStr;
                     NSMutableString * newString = [[NSMutableString alloc] init] ;
                     int i = 0;
-                    while (i < [str length])
-                    {
+                    while (i < [str length]) {
                         NSString * hexChar = [str substringWithRange: NSMakeRange(i, 2)];
                         int value = 0;
                         sscanf([hexChar cStringUsingEncoding:NSASCIIStringEncoding], "%x",&value);
@@ -940,10 +846,8 @@ int accRange = 0;
                         int ddd=[self scanValue:hexxxx];
                         [array addObject:[NSNumber numberWithInt:ddd]];
                         i+=2;
-                        NSLog(@"Output%@",array);
-                        
+                        //NSLog(@"Output%@",array);
                     }
-                    
                     NSArray*newArray=[[NSArray alloc]init];
                     NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe] , [NSNumber numberWithInt:0x09], [NSNumber numberWithInt:0x01], nil];
                     NSMutableArray *arr1=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xff],nil];
@@ -954,30 +858,16 @@ int accRange = 0;
                     //char* bytes = (char*)&valueToWrite;
                     NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
                     [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+                    NSLog(@"Write system id: %@", [writeValueIO description]);
                     greenindexxx++;
-                    
-                    
-                }
-                
-                else
-                    
-                {
-                    
+                } else {
                     [ttt1 invalidate];
                     ttt1=nil;
                     greenindexxx=0;
-                    
-                    
                 }
-               
             }
-                
-                
         }
-            
     }
-
-    
 }
 
 
@@ -1071,6 +961,7 @@ int accRange = 0;
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Write motor data: %@", [writeValueIO description]);
         greenindexxx++;
     }
     else
@@ -1079,72 +970,47 @@ int accRange = 0;
         greenindexxx=0;
     }
 }
--(void)lightGreenOn:(NSString *)blade
-{
-    if (IOCharacteristic != nil){
+
+-(void)lightGreenOn:(NSString *)blade {
+    if (IOCharacteristic != nil) {
         self.isUP=NO;
         self.isDown=NO;
         int valueToWrite = 2;
         char* bytes = (char*) &valueToWrite;
-        // [self gethex];
         [ttt invalidate];
         [[NSUserDefaults standardUserDefaults] setObject:blade forKey:@"BladePosition"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        NSString *savedValue = [[NSUserDefaults standardUserDefaults]
-                                stringForKey:@"SaveCBPeripheral"];
-        for(CBPeripheral *p  in self.sensorTags)
-        {
+        NSString *savedValue = [[NSUserDefaults standardUserDefaults] stringForKey:@"SaveCBPeripheral"];
+        for(CBPeripheral *p  in self.sensorTags) {
             NSUUID* serverId = [p identifier];
-            
             if ([savedValue isEqualToString:serverId.UUIDString]) {
-                
-                //[self readMotor:p];
-                
-                
-                ttt=[NSTimer scheduledTimerWithTimeInterval:0.01
-                                                     target:self
-                                                   selector:@selector(writeMOtor:)
-                                                   userInfo:p
-                                                    repeats:YES];
-                
+                ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(writeMOtor:) userInfo:p repeats:YES];
             }
-            
         }
-        
     }
-    // }
 }
--(void)lightRedOff
-{
-    if (IOCharacteristic != nil){
-        
+
+-(void)lightRedOff {
+    if (IOCharacteristic != nil) {
         int valueToWrite = 0;
-        
-        // self.isUP=YES;
-        // self.isDown=YES;
-        
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
-        //  id writeValueIO = NSData(bytes: &valueToWrite, length: sizeof(UInt8))
-        // self.sensorTagPeripheral.writeValue(writeValueIO, forCharacteristic: IOCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         [self.sensorTagPeripheral writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
-        NSLog(@"bytes %s",bytes);
-        NSLog(@"writeValueIO %@",writeValueIO);
-        }
-}
--(void)lightRedOn:(NSString *)blade
-{
-    if (IOCharacteristic != nil){
-        
-        
+        NSLog(@"Red light data: %@", [writeValueIO description]);
     }
 }
+
+-(void)lightRedOn:(NSString *)blade {
+    if (IOCharacteristic != nil) {
+    }
+}
+
 -(NSString *)gethexfrmDec:(NSString *)strrr
 {
     // NSString *dec = @"254";
      NSString *hex = [NSString stringWithFormat:@"0x%lX",
                      (unsigned long)[strrr integerValue]];
-     NSLog(@"%@", hex);
+     //NSLog(@"%@", hex);
      // NSLog(@"gethex%@", hexStr);
      return hex;
     
@@ -1168,62 +1034,40 @@ int accRange = 0;
     return string;
 }
 
--(NSString *)gethex:(NSString *)strrr
-{
+-(NSString *)gethex:(NSString *)strrr {
     NSString * str = strrr;
-    
     NSString * hexStr =[NSString stringWithFormat:@"%@",
                          [NSData dataWithBytes:[str cStringUsingEncoding:NSUTF8StringEncoding]
                                         length:strlen([str cStringUsingEncoding:NSUTF8StringEncoding])]];
     
-    for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil])
+    for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil]) {
         hexStr = [hexStr stringByReplacingOccurrencesOfString:toRemove withString:@""];
+    }
     
-    NSLog(@"gethex%@", hexStr);
+    //NSLog(@"gethex%@", hexStr);
     return hexStr;
-
 }
 
--(void)getMotionData:(NSData *)data
-{
-    //http://processors.wiki.ti.com/index.php/CC2650_SensorTag_User's_Guide#Movement_Sensor
-   //unsigned char *orgBytes = (unsigned char *)[data bytes];
-    //char* bytes = (char*) &valueToWrite;
+-(void)getMotionData:(NSData *)data {
     NSUInteger len = [data length];
     Byte *orgBytes = (Byte*)malloc(len);
     NSString * str = @"MORNING";
     
-    NSString * hexStr = [NSString stringWithFormat:@"%@",
-                         [NSData dataWithBytes:orgBytes
-                                        length:sizeof(18)]];
+    NSString * hexStr = [NSString stringWithFormat:@"%@", [NSData dataWithBytes:orgBytes length:sizeof(18)]];
     
-    for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil])
+    for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil]) {
         hexStr = [hexStr stringByReplacingOccurrencesOfString:toRemove withString:@""];
+    }
     
     NSLog(@"%@", hexStr);
     NSLog(@"orgBytes%ld", orgBytes);
-    
-    int16_t gyroX = (orgBytes[1]  << 8) + orgBytes[0];
-    int16_t gyroY = (orgBytes[3]  << 8) + orgBytes[2];
-    int16_t gyroZ = (orgBytes[5] << 8) + orgBytes[4];
-    int16_t accX  = (orgBytes[7] << 8) + orgBytes[6];
-    int16_t accY  = (orgBytes[9] << 8) + orgBytes[8];
-    int16_t accZ  = (orgBytes[11] << 8) + orgBytes[10];
-    int16_t magX  = (orgBytes[13] << 8) + orgBytes[12];
-    int16_t magY  = (orgBytes[15] << 8) + orgBytes[14];
-    int16_t magZ  = (orgBytes[17] << 8) + orgBytes[16];
-//
-    //NSLog(@"%f %f %f", sensorMpu9250GyroConvert(gyroX),sensorMpu9250GyroConvert(gyroY),sensorMpu9250GyroConvert(gyroZ));
-    //    NSLog(@"%f %f %f", sensorMpu9250AccConvert(accX, accRange),sensorMpu9250AccConvert(accY, accRange),sensorMpu9250AccConvert(accZ, accRange));
-    //    NSLog(@"%f %f %f", sensorMpu9250MagConvert(magX),sensorMpu9250MagConvert(magY),sensorMpu9250MagConvert(magZ));
-    
-    // -- Label --
-    
 }
+
 #pragma mark - SENSOR TAG BLE DELEGATES
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_DATA]]) {
-        NSLog(@"UUID_MOV_DATA updated value is %@  ///%@",peripheral,characteristic.value);
+        NSLog(@"UUID_MOV_DATA = %@  ", characteristic.value.description);
+        
         NSString * hexStr = [NSString stringWithFormat:@"%@", characteristic.value];
         hexStr = [hexStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
         hexStr = [hexStr stringByReplacingOccurrencesOfString:@">" withString:@""];
@@ -1231,37 +1075,39 @@ int accRange = 0;
         NSString *writeCommd=[hexStr substringToIndex:4];
         hexStr=[hexStr substringFromIndex:4];
        
-        NSString *realstrr=[self
-                           stringFromHexString:hexStr];
-        NSLog(@"realstrr%@", realstrr);
+        NSString *realstrr=[self stringFromHexString:hexStr];
+        //NSLog(@"realstrr%@", realstrr);
         if ([writeCommd isEqualToString:@"0901"]) {
-           if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]) {
-               [self.m cancelPeripheralConnection:peripheral];
-               NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
-               NSLog(@"DevicesNamedList value is %@", [userDeafult  valueForKey:DevicesNamedList]);
-               NSMutableDictionary *diccttt=[userDeafult  objectForKey:DevicesNamedList];
-               for(id key in diccttt){
-                   NSLog(@"key: %@, value: %@", key, [diccttt objectForKey:key]);
-                   if ([key isEqualToString:peripheral.identifier.UUIDString]) {
-                       if(diccttt.count>0) {
-                           if (realstrr) {
-                               NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
-                               dictionary_devices=[diccttt mutableCopy];
-                               [dictionary_devices setValue:realstrr forKey:key];
-                               [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
-                               [userDeafult synchronize];
-
+            if(self.nameIsSet == false) {
+                self.nameIsSet = true;
+                if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]) {
+                   NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
+                   NSLog(@"DevicesNamedList value is %@", [userDeafult  valueForKey:DevicesNamedList]);
+                   NSMutableDictionary *diccttt=[userDeafult  objectForKey:DevicesNamedList];
+                   for(id key in diccttt){
+                       NSLog(@"key: %@, value: %@", key, [diccttt objectForKey:key]);
+                       if ([key isEqualToString:peripheral.identifier.UUIDString]) {
+                           if(diccttt.count>0) {
+                               if (realstrr) {
+                                   NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
+                                   dictionary_devices=[diccttt mutableCopy];
+                                   [dictionary_devices setValue:realstrr forKey:key];
+                                   [userDeafult  setObject:dictionary_devices forKey:DevicesNamedList];
+                                   [userDeafult synchronize];
+                               }
                                [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
-                           } else {
-                               [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
+                               if(self.clockIsSet == false) {
+                                   [self performSelector:@selector(connectClockID) withObject:self afterDelay:1.0f];
+                                   self.clockIsSet = true;
+                               }
                            }
                        }
                    }
                }
-           }
+            }
         } else  if([writeCommd isEqualToString:@"0900"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommd]) {
-                [self.m cancelPeripheralConnection:peripheral];
+                //[self.m cancelPeripheralConnection:peripheral];
                 NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
                 [self.response_Arr addObject:peripheral];
                 NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
@@ -1303,7 +1149,7 @@ int accRange = 0;
             }
         } else  if([writeCommd containsString:@"0801"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] ) {
-                [self.m cancelPeripheralConnection:peripheral];
+                //[self.m cancelPeripheralConnection:peripheral];
                 [self.response_Arr addObject:peripheral];
                 NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
                 self.response_Arr=nil;
@@ -1311,7 +1157,7 @@ int accRange = 0;
             }
         } else  if([writeCommd containsString:@"0800"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] ){
-                [self.m cancelPeripheralConnection:peripheral];
+                //[self.m cancelPeripheralConnection:peripheral];
                 [self.response_Arr addObject:peripheral];
                 NSLog(@"the self.respo && sensortag %@,,, %@",self.readPresetArr,self.sensorTags);
                 self.response_Arr=nil;
@@ -1342,7 +1188,7 @@ int accRange = 0;
                 [self PRESETINFO:peripheral];
             }
         } else {
-            [self.m cancelPeripheralConnection:peripheral];
+            //[self.m cancelPeripheralConnection:peripheral];
             prestcount=1;
             r++;
             [ttt invalidate];
@@ -1362,49 +1208,31 @@ int accRange = 0;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if(buttonIndex == 0)//OK button pressed
-    {
+    if(buttonIndex == 0) {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"tableAftrRead"
-         object:self userInfo:nil];    }
-    else if(buttonIndex == 1)//Annul button pressed.
-    {
+         object:self userInfo:nil];
+    } else if(buttonIndex == 1) {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"tableAftrRead"
-         object:self userInfo:nil];    }
+         object:self userInfo:nil];
+    }
 }
+
 #pragma mark - CBCentralManager delegate
 -(void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    
-     NSString*sss=[NSString stringWithFormat:@"%ld",(long)central.state] ;
-    if (central.state!= CBCentralManagerStatePoweredOn)
-    {
-        //        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"BLE not supported !" message:[NSString stringWithFormat:@"CoreBluetooth return state: %d",central.state] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        //        [alertView show];
+    NSString*sss=[NSString stringWithFormat:@"%ld",(long)central.state] ;
+    if (central.state!= CBCentralManagerStatePoweredOn) {
     }
-    if ([sss isEqualToString:@"4"])
-    {
-        
+    if ([sss isEqualToString:@"4"]) {
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"BLE not supported !" message:[NSString stringWithFormat:@"CoreBluetooth return state: %ld",(long)central.state] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertView show];
-        
-        
-    }
-
-    else {
-       // [central scanForPeripheralsWithServices:@[ [CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]] options:nil ];
-        
+    } else {
         NSArray *services = @[[CBUUID UUIDWithString:SENSORTAG_SERVICE_UUID]];
-        
-      //  NSArray *peripherl = [central retrievePeripheralsWithIdentifiers:services];
-        
-       
         [central scanForPeripheralsWithServices:services options:nil];
-        
-        
     }
 }
+
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error;
 {
 
@@ -1484,9 +1312,8 @@ int accRange = 0;
                 int  valueToWrite = 0;
                 char* bytes = (char*) &valueToWrite;
                 NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
-                NSLog(@"bytes %s",bytes);
-                NSLog(@"writeValueIO %@",writeValueIO);
                 [peripheral writeValue:writeValueIO forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+                NSLog(@"Configure IO service data: %@", [writeValueIO description]);
                 IOCharacteristic = characteristic;
                 [arrCHARCTERCITS setObject:characteristic forKey:peripheral];
             }
@@ -1526,8 +1353,7 @@ int accRange = 0;
         }
     }
 }
--(CBCharacteristic *) getCharateristicWithUUID:(NSString *)uuid from:(CBService *) cbService
-{
+-(CBCharacteristic *) getCharateristicWithUUID:(NSString *)uuid from:(CBService *) cbService {
     for (CBCharacteristic *characteristic in cbService.characteristics) {
         if([characteristic.UUID isEqual:[CBUUID UUIDWithString:uuid]]){
             return characteristic;
@@ -1535,90 +1361,51 @@ int accRange = 0;
     }
     return nil;
 }
--(void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
-{
+
+-(void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if(error) {
-        
         NSLog(@"Error changing notification state: %@", error.localizedDescription);
     }
     
-    // Exits if it's not the transfer characteristic
     if (![characteristic.UUID isEqual:[CBUUID UUIDWithString:TRANSFER_CHARACTERISTIC_UUID]]) {
-        
         return;
     }
-    // NSLog(@"Notification characteristic on %@",characteristic);
-    // Notification has started
     if (characteristic.isNotifying) {
-        
-        
         [peripheral readValueForCharacteristic:characteristic];
         NSLog(@"Notification began on %@", characteristic.value);
-          //[myPeripheralManager updateValue:[@"EOM" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:self.transferCharacteristic onSubscribedCentrals:nil];
-       
-        
-    } else { // Notification has stopped
-        // so disconnect from the peripheral
+    } else {
         NSLog(@"Notification stopped on %@.  Disconnecting", characteristic);
         [self.m cancelPeripheralConnection:peripheral];
     }
-    
-   ////
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    
-    NSLog(@"didWriteValueForCharacteristic %@ error = %@",characteristic,error);
-    
+    NSLog(@"didWriteValueForCharacteristic: data = %@, Error = %@", characteristic.value, error);
 }
 
 -(void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
-    
     if (error == nil) {
-        
         NSLog(@"THAPAP service: %@", [error localizedDescription]);
-        // Starts advertising the service
         [myPeripheralManager startAdvertising:@{CBAdvertisementDataLocalNameKey:@"ICServer",CBAdvertisementDataServiceUUIDsKey:@[[CBUUID UUIDWithString:TRANSFER_SERVICE_UUID]]}];
-        
-        
-    
     }
 
-    if(error){
-        
+    if(error) {
         NSLog(@"Error publishing service: %@", [error localizedDescription]);
-    
     }
-    
 }
--(void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic
-{
-    
-    
+
+-(void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
     NSLog(@"Central subscribed to characteristic");
-    
-    // Get the data
     NSString *STRRSS=@"HI SHARAD THAPA";
     self.dataToSend = [STRRSS dataUsingEncoding:NSUTF8StringEncoding];
-    
-    // Reset the index
     self.sendDataIndex = 0;
-    
-    // Start sending
-  //  [self sendData];
-}
--(void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral
-{
-    // Start sending again
-   // [self sendData];
-    
 }
 
--(void)sendDataToPeripheral
-{
-    //We're in CBPeripheralManagerStatePoweredOn state...
+-(void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
+}
+
+-(void)sendDataToPeripheral {
     NSLog(@"self.peripheralManager powered on.");
-    // ... so build our service.
     
     NSMutableDictionary *getDic = [[NSMutableDictionary alloc] init];
     [getDic setObject:@"Morning Fav" forKey:@"Preset_name"];
@@ -1633,7 +1420,7 @@ int accRange = 0;
     memcpy(byteData, [datSend bytes],len);
     
     NSData *writeValueIO = [NSData dataWithBytes:byteData length:sizeof(UInt16)];
-    NSLog(@"lenthhhhbytess %ld",writeValueIO.length);
+    NSLog(@"Sending data to peripheral: %@", [writeValueIO description]);
     
     
     
@@ -1663,95 +1450,31 @@ int accRange = 0;
     NSLog(@"got valueee %@",STRRRTR);
     
 }
--(void)sendData
-{
-    // First up, check if we're meant to be sending an EOM
-    
+
+-(void)sendData {
     static BOOL sendingEOM = NO;
-    
     if (sendingEOM) {
-        
-        // send it
-        
-      //  BOOL didSend = [myPeripheralManager updateValue:[@"EOM" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:self.transferCharacteristic onSubscribedCentrals:nil];
-        
-        // Did it send?
-      //  if (didSend) {
-            
-            // It did, so mark it as sent
-         //   sendingEOM = NO;
-            
-         //   NSLog(@"Sent: EOM");
-     //   }
-        
-        // It didn't send, so we'll exit and wait for peripheralManagerIsReadyToUpdateSubscribers to call sendData again
         return;
     }
-    
-    // We're not sending an EOM, so we're sending data
-    
-    // Is there any left to send?
-    
     if (self.sendDataIndex >= self.dataToSend.length){
-        
-        // No data left.  Do nothing
-    
-        
-    return;
-        
-    
+        return;
     }
-    
-    // There's data left, so send until the callback fails, or we're done.
     
     BOOL didSend = YES;
     
     while (didSend) {
-        
-        // Make the next chunk
-        
-        // Work out how big it should be
         NSInteger amountToSend = self.dataToSend.length - self.sendDataIndex;
-        
-        // Can't be longer than 20 bytes
-        
-        
-        // Copy out the data we want
-      //  NSData *chunk = [NSData dataWithBytes:self.dataToSend.bytes+self.sendDataIndex length:amountToSend];
-        
-        // Send it
-     //   didSend = [myPeripheralManager updateValue:chunk forCharacteristic:self.transferCharacteristic onSubscribedCentrals:nil];
-        
-        // If it didn't work, drop out and wait for the callback
-        
         if (!didSend) {
             return;
         }
         
-       // NSString *stringFromData = [[NSString alloc] initWithData:chunk encoding:NSUTF8StringEncoding];
-      //  NSLog(@"Sent: %@", stringFromData);
-        
-        // It did send, so update our index
-       // self.sendDataIndex += amountToSend;
-        
-        // Was it the last one?
         if (self.sendDataIndex >= self.dataToSend.length){
-            
-            // It was - send an EOM
-            
-            // Set this so if the send fails, we'll send it next time
             sendingEOM = YES;
-            
-            // Send it
             BOOL eomSent = [myPeripheralManager updateValue:[@"00000010" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:IOCharacteristic onSubscribedCentrals:nil];
-            
             if (eomSent) {
-                // It sent, we're all done
                 sendingEOM = NO;
-                
                 NSLog(@"Sent: EOM");
             }
-            
             return;
         }
     }
@@ -1760,30 +1483,20 @@ int accRange = 0;
 -(void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
 }
 
--(void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral
-                                       error:(NSError *)error {
-
-    if(error){
-        
+-(void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
+    if(error) {
         NSLog(@"Error advertising: %@", [error localizedDescription]);
-        
     }
-
-
 }
+
 -(void)peripheralManager:(CBPeripheralManager *)peripheral
     didReceiveReadRequest:(CBATTRequest *)request{
     if ([request.characteristic.UUID isEqual:myCharacteristic.UUID]) {
         if (request.offset > myCharacteristic.value.length) {
-            [myPeripheralManager respondToRequest:request
-                                       withResult:CBATTErrorInvalidOffset];
-            request.value = [myCharacteristic.value
-                             subdataWithRange:NSMakeRange(request.offset,
-                                                          myCharacteristic.value.length - request.offset)];
+            [myPeripheralManager respondToRequest:request withResult:CBATTErrorInvalidOffset];
+            request.value = [myCharacteristic.value subdataWithRange:NSMakeRange(request.offset, myCharacteristic.value.length - request.offset)];
             [myPeripheralManager respondToRequest:request withResult:CBATTErrorSuccess];
-            
             return;
-            
         }
     }
 }

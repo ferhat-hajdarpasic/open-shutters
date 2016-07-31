@@ -223,96 +223,55 @@
   
     NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
   
-    if (selectedINedx>=0) {
-        
+    if (selectedINedx >= 0) {
         NameShutterTableViewCell *cell=(NameShutterTableViewCell *)[table_shutter cellForRowAtIndexPath:indxx];
-    
-        if (cell.name.text.length>0 && cell.shutter_name.text.length>0 && isTextFld==YES)
-        {
-        
-        isTextFld=NO;
-      //  NSString *sensorInstrument=[app.array_devices objectAtIndex:selectedINedx];
-        NSArray *arrrr= [dictionary_devices allKeys];
-        
-        //////// dictionary for shutter and room extraction
-        NSString *sensorInstrument=[arrrr objectAtIndex:selectedINedx];
-        NSString *roomShuttr=[NSString stringWithFormat:@"%@-%@",cell.name.text,cell.shutter_name.text];
-        [dictionary_devices enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            NSLog(@"%@->%@",key,obj);
-            for (id element in app.array_devices){
-              if ([sensorInstrument isEqualToString:key]) {
-                    
-                   // if ([[dictionary_devices valueForKey:sensorInstrument] isEqualToString:@""]) {
+        if ((cell.name.text.length > 0) && (cell.shutter_name.text.length > 0) && (isTextFld==YES)) {
+            isTextFld=NO;
+            NSArray *arrrr= [dictionary_devices allKeys];
+            
+            NSString *sensorInstrument=[arrrr objectAtIndex:selectedINedx];
+            NSString *roomShuttr=[NSString stringWithFormat:@"%@-%@",cell.name.text,cell.shutter_name.text];
+            [dictionary_devices enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                NSLog(@"%@->%@",key,obj);
+                for (id element in app.array_devices) {
+                    if ([sensorInstrument isEqualToString:key]) {
                         [dictionary_devices setValue:roomShuttr forKey:sensorInstrument];
-                    
-                NSMutableDictionary *dict=[[NSMutableDictionary alloc]initWithObjectsAndKeys:roomShuttr,sensorInstrument,sensorInstrument,@"uuid", nil];
-                       // [self.delegate sytemIDCommand:roomShuttr device:sensorInstrument];
-                  
-                
-                  [[NSNotificationCenter defaultCenter]
-                   
-                   
-                             postNotificationName:@"SYSTEMCommand"
-                             object:self userInfo:dict];
-                
-                  dispatch_async(dispatch_get_main_queue(), ^{
-                      //[MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    //Your main thread code goes in here
-                      NSLog(@"Im on the main thread");
-                  });
-
-                  
-                         NSLog(@"elemennt ---- sensor elemnt %@ %@",key,sensorInstrument);
-                   // }
+                        NSMutableDictionary *dict=[[NSMutableDictionary alloc]initWithObjectsAndKeys:roomShuttr,sensorInstrument,sensorInstrument,@"uuid", nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"SYSTEMCommand" object:self userInfo:dict];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            NSLog(@"Im on the main thread");
+                        });
+                        NSLog(@"elemennt ---- sensor elemnt %@ %@",key,sensorInstrument);
+                    }
                 }
-            }
-              selectedINedx=-1;
-            // Set stop to YES when you wanted to break the iteration.
-        }];
-        
-        [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
-        //[table_shutter reloadData];
-      
-        
-        
-//        ShutterPresetcrollerViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ShutterPresetcrollerViewController"];
-//        CATransition *transition = [CATransition animation];
-//        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-//        transition.type = kCATransitionPush;
-//        transition.subtype = kCATransitionFromRight;
-//        [self.view.window.layer addAnimation:transition forKey:nil];
-//        [self presentViewController:vc animated:NO completion:nil];
-        
+                  selectedINedx = -1;
+            }];
+            
+            [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
+        } else {
+            UIAlertController *myAlertController =
+                [UIAlertController alertControllerWithTitle:@"Open Shutter"
+                    message: @"Please fill the feilds!"
+                    preferredStyle:UIAlertControllerStyleAlert];
+            
+            //Step 2: Create a UIAlertAction that can be added to the alert
+            UIAlertAction* ok = [UIAlertAction
+                                 actionWithTitle:@"OK"
+                                 style:UIAlertActionStyleDefault
+                                 handler:^(UIAlertAction * action)
+                                 {
+                                     //Do some thing here, eg dismiss the alertwindow
+                                     [myAlertController dismissViewControllerAnimated:YES completion:nil];
+                                     
+                                 }];
+            
+            //Step 3: Add the UIAlertAction ok that we just created to our AlertController
+            [myAlertController addAction: ok];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            //Step 4: Present the alert to the user
+            [self presentViewController:myAlertController animated:YES completion:nil];
         }
-else
-    {
-    
-        
-        UIAlertController *myAlertController = [UIAlertController alertControllerWithTitle:@"Open Shutter"
-                                                                                   message: @"Please fill the feilds!"
-                                                                            preferredStyle:UIAlertControllerStyleAlert];
-        
-        //Step 2: Create a UIAlertAction that can be added to the alert
-        UIAlertAction* ok = [UIAlertAction
-                             actionWithTitle:@"OK"
-                             style:UIAlertActionStyleDefault
-                             handler:^(UIAlertAction * action)
-                             {
-                                 //Do some thing here, eg dismiss the alertwindow
-                                 [myAlertController dismissViewControllerAnimated:YES completion:nil];
-                                 
-                             }];
-        
-        //Step 3: Add the UIAlertAction ok that we just created to our AlertController
-        [myAlertController addAction: ok];
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-        //Step 4: Present the alert to the user
-        [self presentViewController:myAlertController animated:YES completion:nil];
-        
-    }
-}
-else
-{
+    } else {
         myAlertController = [UIAlertController alertControllerWithTitle:@"Open Shutter"
                                                                 message: @"Please select a device!"
                                                          preferredStyle:UIAlertControllerStyleAlert];
@@ -589,50 +548,29 @@ else
     return cell;
 
 }
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     indxx=indexPath;
     selectedINedx=indexPath.row;
 
     NameShutterTableViewCell *cell=(NameShutterTableViewCell *)[table_shutter cellForRowAtIndexPath:indxx];
     cell.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0f/255 blue:245.0F/255 alpha:1];
     
-    if ([expandedCells containsObject:indexPath])
-    {
-        
+    if ([expandedCells containsObject:indexPath]) {
         [expandedCells removeObject:indexPath];
-        
-    }
-    else
-       {
-           [expandedCells addObject:indexPath];
-          
-         if (indexPath.row==0) {
-          
+    } else {
+        [expandedCells addObject:indexPath];
+        if (indexPath.row==0) {
             NSString *strr=[app.array_devices objectAtIndex:indexPath.row];
             NSMutableArray *items = [strr componentsSeparatedByString:@"-"];
-            
-             if (items.count>1) {
-                
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ConnectWithServices" object:self userInfo:nil];
+            if (items.count > 1) {
                 txt_room.text=[items objectAtIndex:0];
                 txt_shutter.text=[items objectAtIndex:1];
- 
-             }
-        else
-            {
-             
-                
+            } else {
                 txt_room.text=[items objectAtIndex:0];
-                
-            
             }
-             
-          
          }
-           
-      
-       }
-    
+    }
     [table_shutter reloadData];
 }
 

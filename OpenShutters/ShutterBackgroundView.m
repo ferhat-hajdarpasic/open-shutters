@@ -476,38 +476,25 @@ else if ([self.old_new_preset isEqualToString:@"oldpreset"])
     NSLog(@"cancel btn pressed");
 
 }
--(void)upMoveStop:(id)sender
-{
-   
-    
-    //for (int i=0; i<self.blade_array.count; i++) {
-      ++blade_count;
-     NSLog(@"the balddeeeeee is %d",blade_count);
-    if (blade_count<0){
-       
-        blade_count=0;
+-(void)upMoveStop:(id)sender {
+    ++blade_count;
+    NSLog(@"the balddeeeeee is %d",blade_count);
+    if (blade_count < 0) {
+        blade_count = 0;
     }
-    if (blade_count>6){
+    if (blade_count > 6) {
         
-        blade_count=6;
+        blade_count = 6;
     }
-    if (blade_count>=0 && blade_count<7) {
-        
-      //  if (PRESET==NO) {
-            
-        
-        if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)])
-         {
+    if (blade_count >= 0 && blade_count < 7) {
+        if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)]) {
              [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
          }
-       // }
         
-         self.blade_img.image=nil;
-         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
+        self.blade_img.image=nil;
+        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
         NSLog(@"blade countt %d",blade_count);
-        
-        
-     }
+    }
     
 //[UIImage imageNamed:@"blade_2.png"]
 //    NSString *imgName = [self.blade_img image].accessibilityIdentifier;

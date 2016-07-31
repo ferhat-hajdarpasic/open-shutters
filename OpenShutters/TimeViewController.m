@@ -295,7 +295,7 @@
     for(NSString * toRemove in [NSArray arrayWithObjects:@"<", @">", @" ", nil])
         hexStr = [hexStr stringByReplacingOccurrencesOfString:toRemove withString:@""];
     
-    NSLog(@"gethex%@", hexStr);
+    //NSLog(@"gethex%@", hexStr);
     return hexStr;
     
 }

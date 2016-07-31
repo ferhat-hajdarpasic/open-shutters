@@ -62,12 +62,15 @@
 @property (strong,nonatomic) NSMutableArray *calibertaedPresetArr;
 @property (nonatomic,weak)id <CustomSensorDelegate> delegate;
 @property (nonatomic)BOOL discoverServicesAfterConnect;
+@property (nonatomic)BOOL clockIsSet;
+@property (nonatomic)BOOL nameIsSet;
 
 + (id)sharedCustomSensor;
 -(void)lightGreenOn:(NSString *)blade;
 -(void)lightGreenOff;
 -(void)lightRedOn:(NSString *)blade;
 -(void)lightRedOff;
+-(void)ConnectWithServices;
 -(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUploadshuttr:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
