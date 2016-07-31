@@ -1757,56 +1757,7 @@ int accRange = 0;
     }
 }
 
--(void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral
-{
-
-//    if (peripheral.state != CBPeripheralManagerStatePoweredOn) {
-//    
-//      
-//    }
-//
-//    //We're in CBPeripheralManagerStatePoweredOn state...
-//    NSLog(@"self.peripheralManager powered on.");
-//    
-//    // ... so build our service.
-//    NSMutableDictionary *getDic = [[NSMutableDictionary alloc] init];
-//    [getDic setObject:@"Morning Fav" forKey:@"Preset_name"];
-//    [getDic setObject:@"Thursday" forKey:@"Day"];
-//    [getDic setObject:@"17-12-2015" forKey:@"date"];
-//    [getDic setObject:@"living room-tv" forKey:@"shutter_name"];
-//   
-//      NSData *datSend = [NSJSONSerialization dataWithJSONObject:getDic options:NSJSONWritingPrettyPrinted error:nil];
-//   // NSData *data = [NSData dataWithContentsOfFile:filePath];
-//    NSUInteger len = [datSend length];
-//  
-//    Byte *byteData = (Byte*)malloc(len);
-//    memcpy(byteData, [datSend bytes], len);
-//    
-//      NSData *writeValueIO = [NSData dataWithBytes:byteData length:sizeof(UInt16)];
-//      NSLog(@"lenthhhhbytess %ld",writeValueIO.length);
-//    //char bytes = &getDic;
-//   // NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(8)];
-//   // NSData * datSend = [@"thapaa" dataUsingEncoding:NSUTF8StringEncoding];
-//    // Start with the CBMutableCharacteristic
-//    self.transferCharacteristic = [[CBMutableCharacteristic alloc] initWithType:[CBUUID UUIDWithString:TRANSFER_CHARACTERISTIC_UUID]
-//                                                                     properties:CBCharacteristicPropertyWrite
-//                                                                          value:datSend
-//                                                                    permissions:CBAttributePermissionsWriteable];
-//    
-////  // Then the serviceo[
-//    CBMutableService *transferService = [[CBMutableService alloc] initWithType:[CBUUID UUIDWithString:TRANSFER_SERVICE_UUID]
-//                                                                      primary:YES];
-////    
-////     //Add the characteristic to the service
-//    transferService.characteristics = @[self.transferCharacteristic];
-//
-//    // And add it to the peripheral manager
-//  
-//     
-//     //[myPeripheralManager addService:transferService];
-//    NSLog(@"the thapapapreripheral is %@",myPeripheralManager);
-
-
+-(void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
 }
 
 -(void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral
