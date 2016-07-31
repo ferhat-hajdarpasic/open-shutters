@@ -891,7 +891,7 @@
    
     ShutterBg = (ShutterBackgroundView *)[[ShutterBackgroundView alloc] initWithFrame:CGRectMake(0, 0 , viewForContiner.frame.size.width, viewForContiner.frame.size.height)];
     ShutterBg.UUIDD=uniqueID;
-    [ShutterBg hideApplyCancel];
+   [ShutterBg hideApplyCancel];
     ShutterBg.delegate=self;
     [viewForContiner addSubview:ShutterBg];
 

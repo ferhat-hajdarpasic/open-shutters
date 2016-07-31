@@ -79,7 +79,6 @@ int accRange = 0;
     
     _data = [[NSMutableData alloc] init];
 
-    connectP=connect;
     readDevice=psss;
 }
 
@@ -140,7 +139,6 @@ int accRange = 0;
     
     //[myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]] }];
     
-    connectP=connect;
     r=0;
     readDevice=psss;
   [self performSelector:@selector(readPreset) withObject:self afterDelay:3.0];
@@ -440,34 +438,29 @@ int accRange = 0;
     
 }
 
--(void)counterUploadshuttr:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn
-{
+- (void)connnectAndDiscoverServices:(CBPeripheral *)p {
+    self.discoverServicesAfterConnect = true;
+    [self.m connectPeripheral:p options:nil];
+}
+
+-(void)counterUploadshuttr:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn {
     if ([psss isEqualToString:@"shutterMotor"]) {
-        
         for(CBPeripheral *p  in self.sensorTags) {
             p.delegate=self;
-            [self.m connectPeripheral:p options:nil];
+            [self connnectAndDiscoverServices:p];
             NSUUID* serverId = [p identifier];
-            
             if ([UNIQUEID isEqualToString:serverId.UUIDString]) {
-                
                 [self readMotor:p];
             }
         }
-    }
-    else if ([psss isEqualToString:@"NewPresetMotor"]) {
-        
+    } else if ([psss isEqualToString:@"NewPresetMotor"]) {
         for(CBPeripheral *p  in self.sensorTags) {
-                       NSUUID* serverId = [p identifier];
-            
+            NSUUID* serverId = [p identifier];
             if ([UNIQUEID isEqualToString:serverId.UUIDString]) {
                 p.delegate=self;
-                [self.m connectPeripheral:p options:nil];
-                
-             
+                [self connnectAndDiscoverServices:p];
             }
         }
-
     }
 }
 
@@ -1230,7 +1223,7 @@ int accRange = 0;
 #pragma mark - SENSOR TAG BLE DELEGATES
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_DATA]]) {
-        NSLog(@"peripheral updated value is %@  ///%@",peripheral,characteristic.value);
+        NSLog(@"UUID_MOV_DATA updated value is %@  ///%@",peripheral,characteristic.value);
         NSString * hexStr = [NSString stringWithFormat:@"%@", characteristic.value];
         hexStr = [hexStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
         hexStr = [hexStr stringByReplacingOccurrencesOfString:@">" withString:@""];
@@ -1336,89 +1329,38 @@ int accRange = 0;
                offf=NO;
            }
         } else  if([writeCommd containsString:@"04"]) {
-        if (![hexStr containsString:@"00000000000000000000000000000000"]){
-        
-         
-            //prestcount++;
-          //  NSInteger rr= [self.sensorTags count];
-            if (prestcount<64){
+        if (![hexStr containsString:@"00000000000000000000000000000000"]) {
+            if (prestcount<64) {
                 prestcount++;
-               
-                
-                if (![self.readPresetArr containsObject:[NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString]]) {
+               if (![self.readPresetArr containsObject:[NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString]]) {
                     [self.readPresetArr addObject:[NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString]];
                 }
-                
-                
-                
-                [ttt invalidate];
+               [ttt invalidate];
                 ttt=nil;
                 greenindexxx=0;
                 offf=YES;
-                
                 [self PRESETINFO:peripheral];
-                
-                }
-            
-        else{
-            
-            
-            
-             }
-
-        }
-
-    else
-            {
-                
-                    [self.m cancelPeripheralConnection:peripheral];
-               
-                    prestcount=1;
-
-                    r++;
-                    [ttt invalidate];
-
-                    ttt=nil;
-                    greenindexxx=0;
-                    offf=YES;
-
-                    [self readPreset];
-                
-               
-       
-                    NSLog(@"the preset is %@",hexStr);
-            
-        
             }
-    
+        } else {
+            [self.m cancelPeripheralConnection:peripheral];
+            prestcount=1;
+            r++;
+            [ttt invalidate];
+            ttt=nil;
+            greenindexxx=0;
+            offf=YES;
+            [self readPreset];
+            NSLog(@"the preset is %@",hexStr);
+            }
+        } else  if([writeCommd containsString:@"03"]) {
+            if (![hexStr containsString:@"00000000000000000000000000000000"]) {
+                [self.m cancelPeripheralConnection:peripheral];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"PresetSuccess" object:self userInfo:nil];
+            }
         }
-    else  if([writeCommd containsString:@"03"]){
-        
-        if (![hexStr containsString:@"00000000000000000000000000000000"]){
-            
-              [self.m cancelPeripheralConnection:peripheral];
-           
-            [[NSNotificationCenter defaultCenter]
-             postNotificationName:@"PresetSuccess"
-             object:self userInfo:nil];
-
-            //prestcount++;
-            //  NSInteger rr= [self.sensorTags count];
-            
-                
-            
-        }
-        
-        else
-        {
-            
-            
-        }
-        
-      }
     }
-
 }
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if(buttonIndex == 0)//OK button pressed
@@ -1511,7 +1453,10 @@ int accRange = 0;
     NSLog(@"Peripheral Connected");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
     
-    //[peripheral discoverServices:nil];
+    if(self.discoverServicesAfterConnect == true) {
+        [peripheral discoverServices:nil];
+        self.discoverServicesAfterConnect = false;
+    }
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {

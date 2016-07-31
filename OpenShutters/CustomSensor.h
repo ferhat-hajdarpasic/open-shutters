@@ -30,13 +30,11 @@
     int greenindexxx,greenindexxx1,r,prestcount;
     NSTimer *ttt,*ttt1,*ReadTime;
     BOOL offf;
-    BOOL connectP;
     NSString *uuid_peripheral;
-     NSMutableDictionary *arrCHARCTERCITS;
+    NSMutableDictionary *arrCHARCTERCITS;
     int globalcounttp;
     NSString *readDevice;
-   bool clockUpadte;
-
+    bool clockUpadte;
 }
 -(void)clock;
 -(void)connectClockID;
@@ -45,6 +43,7 @@
 -(void)sendDataToPeripheral2;
 -(void)sendDataToPeripheral;
 -(void)readMotor;
+
 @property (strong, nonatomic) NSData                    *dataToSend;
 @property (nonatomic, readwrite) NSInteger              sendDataIndex;
 @property (strong, nonatomic) CBCharacteristic   *transferCharacteristic;
@@ -62,6 +61,8 @@
 @property (strong,nonatomic) NSMutableArray *readPresetArr;
 @property (strong,nonatomic) NSMutableArray *calibertaedPresetArr;
 @property (nonatomic,weak)id <CustomSensorDelegate> delegate;
+@property (nonatomic)BOOL discoverServicesAfterConnect;
+
 + (id)sharedCustomSensor;
 -(void)lightGreenOn:(NSString *)blade;
 -(void)lightGreenOff;

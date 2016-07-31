@@ -16,19 +16,9 @@
 @end
 @implementation TimeViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-    
-    ////
-    
-    
-    
-    ////
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(Hideloader:)
-                                                 name:@"PresetSuccess"
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Hideloader:) name:@"PresetSuccess" object:nil];
     myArray = [[NSMutableArray alloc]
                initWithObjects:@"0", @"0", @"0",  @"0",@"0", @"0", @"0", @"0",
                nil];

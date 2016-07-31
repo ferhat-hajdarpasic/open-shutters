@@ -15,28 +15,18 @@
 @synthesize startTransform,delegate;
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)])) {
-        /////self.clipsToBounds = YES;
-        
         startTransform.c=.4;
         blade_count=1;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(Hideloader:)
-                                                     name:@"PresetSuccess"
-                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Hideloader:) name:@"PresetSuccess" object:nil];
 
         self.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0F/255 blue:245.0F/255 alpha:1];
         blindArr=[[NSMutableArray alloc]init];
         isInside=NO;
-        ///// aroow up down
-        //  imgvArrow=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.1,50, frame.size.height*0.8)];
-       // imgvArrow.userInteractionEnabled=YES;
-        ////////// arrow buttons for up, down and center
-        
+       
         btnUp=[UIButton buttonWithType:UIButtonTypeCustom];
          receivedata=[UIButton buttonWithType:UIButtonTypeCustom];
         [receivedata setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [receivedata setFrame:CGRectMake(frame.size.width*0.01,frame.size.height*0.5,400,133)];
-        //  [btnUp setTitle:@"up" forState:UIControlStateNormal];
         if (IS_IPHONE) {
             [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.15,60,63)];
         }
@@ -286,7 +276,7 @@
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
     [csensor  counterUploadshuttr:YES UUID:self.UUIDD presetshutter:@"shutterMotor" on:NO];
-   [MBProgressHUD showHUDAddedTo:self animated:YES];
+   //FERHAT [MBProgressHUD showHUDAddedTo:self animated:YES];
    
     
     
