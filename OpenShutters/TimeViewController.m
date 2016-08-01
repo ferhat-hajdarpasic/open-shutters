@@ -332,23 +332,12 @@
     return  strrr;
 }
 
-    
-
-
-
-- (IBAction)doneBtnPressed:(id)sender
-{
-    
+- (IBAction)doneBtnPressed:(id)sender {
     NSString *str=currentTime;  //is your str
-    
     NSArray *items = [str componentsSeparatedByString:@":"];   //take the one array for split the
-    
     NSString *hrrr=[items objectAtIndex:0];   //shows Description
     NSString *mininn=[items objectAtIndex:1];   //Shows Data
-    // int hrrValue=[self scanValue:hrrr];
-    //int minValue=[self scanValue:mininn];
     
-    NSLog(@"the days inputs arr %@",myArray);
     NSMutableArray *arr=[[NSMutableArray alloc]init];
     arr=[[[myArray reverseObjectEnumerator]allObjects]mutableCopy];
     NSString *greeting = [arr componentsJoinedByString:@""];
@@ -362,101 +351,63 @@
     } while (*a);
     NSLog(@"%X\n", num);
     NSLog(@"%@",greeting);
-    //  NSString * name_preset=[self gethex:@"nann"];
     NSString * pos=@"3";
 
-    
-    if ([self.editOrNew isEqualToString:@"editPreset"]){
-      
+    if ([self.editOrNew isEqualToString:@"editPreset"]) {
         Preset *prest=(Preset *)[self.edit_Preset_arr objectAtIndex:0];
         NSMutableDictionary *diccttt= [[NSMutableDictionary alloc]init];
         
         [diccttt setObject:prest.serial_number forKey:@"serialnum"];
         if ([txtFld_name.text isEqualToString:@""]) {
-          [diccttt setObject:prest.name forKey:@"name"];
-        }
-        else{
-        [diccttt setObject:txtFld_name.text forKey:@"name"];
+            [diccttt setObject:prest.name forKey:@"name"];
+        } else {
+            [diccttt setObject:txtFld_name.text forKey:@"name"];
         }
         
-        [diccttt setObject:[NSString stringWithFormat:@"%@",mininn
-                            ] forKey:@"min"];
+        [diccttt setObject:[NSString stringWithFormat:@"%@",mininn] forKey:@"min"];
         [diccttt setObject:[NSString stringWithFormat:@"%@",hrrr]  forKey:@"hour"];
-        [diccttt setObject:[NSString stringWithFormat:@"%d",num
-                            ] forKey:@"days"];
+        [diccttt setObject:[NSString stringWithFormat:@"%d",num] forKey:@"days"];
         [diccttt setObject:prest.mottor forKey:@"motor"];
         [diccttt setObject:prest.uuid_device forKey:@"UUID"];
         
         [diccttt setObject:@"oldpreset" forKey:@"NEWPREST"];
         csensor=[CustomSensor sharedCustomSensor];
         csensor.delegate=self;
-        [csensor sendPresets:diccttt newPreset:@"oldpreset"];
+        [csensor writePresets:diccttt newPreset:@"oldpreset"];
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = @"Loading...";
         [hud show:YES];
-
-
-   
-    }
-else{
-    
-    
-    
-    if ([txtFld_name.text isEqualToString:@""]) {
-        
-        UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
+    } else {
+        if ([txtFld_name.text isEqualToString:@""]) {
+            UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
                 message:@"Please Fill The Name!"delegate:self
                                                cancelButtonTitle:@"ok"
                                                otherButtonTitles: nil];
-        [alert show];
-        
-
-        
-    }
-    else if (![myArray containsObject:@"1"]) {
-        UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
-                                                         message:@"Please Select a day!"delegate:self
-                                               cancelButtonTitle:@"ok"
-                                               otherButtonTitles: nil];
-        [alert show];
-
-    
-    }
-    else{
-       NSMutableDictionary *eventData = [[NSMutableDictionary alloc]init];
-    
-    
-    
-    // dictionaryWithObjectsAndKeys:name_preset,@"name",pos,@"motor",hrrValue,@"hour",minValue,@"min",num,@"days", nil];
-    
-    
-    [eventData setObject:txtFld_name.text forKey:@"name"];
-    [eventData setObject:pos forKey:@"motor"];
-    
-    [eventData setObject:[NSString stringWithFormat:@"%@",hrrr] forKey:@"hour"];
-    
-    [eventData setObject:[NSString stringWithFormat:@"%@",mininn
-                          ] forKey:@"min"];
-    
-    [eventData setObject:[NSString stringWithFormat:@"%d",num
-                          ] forKey:@"days"];
-    NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
-    [defff setObject:eventData forKey:@"NEWPRESET_DATA"];
-    [defff synchronize];
-    
-
-    if([self.delegate respondsToSelector:@selector(applyTimeVCSelected:mssg2:indxx:)])
-    {
+            [alert show];
+        } else if (![myArray containsObject:@"1"]) {
+            UIAlertView * alert =[[UIAlertView alloc ]
+                            initWithTitle:@"Open Shutter"
+                            message:@"Please Select a day!"delegate:self
+                            cancelButtonTitle:@"ok"
+                            otherButtonTitles: nil];
+            [alert show];
+        } else {
+            NSMutableDictionary *eventData = [[NSMutableDictionary alloc]init];
+            [eventData setObject:txtFld_name.text forKey:@"name"];
+            [eventData setObject:pos forKey:@"motor"];
+            [eventData setObject:[NSString stringWithFormat:@"%@",hrrr] forKey:@"hour"];
+            [eventData setObject:[NSString stringWithFormat:@"%@",mininn] forKey:@"min"];
+            [eventData setObject:[NSString stringWithFormat:@"%d",num] forKey:@"days"];
+            NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
+            [defff setObject:eventData forKey:@"NEWPRESET_DATA"];
+            [defff synchronize];
+            if([self.delegate respondsToSelector:@selector(applyTimeVCSelected:mssg2:indxx:)]) {
                 [self.delegate applyTimeVCSelected:@"fromTIME" mssg2:txtFld_name.text  indxx:1];
-        
-
-    
+            }
         }
     }
-
-    }
-    
 }
+
 -(IBAction)menuBtnPressed:(id)sender
 {
     

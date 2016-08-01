@@ -15,132 +15,47 @@
 #import "Preset.h"
 @implementation PresetViewContoller
 -(void)viewDidLoad {
-    
     [super viewDidLoad];
     switchStr=@"0";
     PrestNameArr=[[NSMutableArray alloc]init];
     
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-    // if (data.length<1) {
     PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
-    // }
-    
     
     if (PrestNameArr.count>0) {
-        
-        
         [table_preset reloadData];
     }
-
-    //[self showData];
-//    app=(AppDelegate *)[[UIApplication sharedApplication]delegate];
-//    app.menu_title=@"Name Shutters";
-//    expandedCells=[[NSMutableArray alloc]init];
-//    
-//    top_view.layer.shadowOffset = CGSizeMake(0, 1);
-//    top_view.layer.shadowRadius = 1;
-//    top_view.layer.shadowOpacity =.4;
-//   // self.view.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0f/255 blue:245.0F/255 alpha:1];
-//    
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(hideBACK:)
-//                                                 name:@"NAMESHUTTER_HIDE_BACK"
-//                                               object:nil];
-//    
-//    isselected=NO;
-//    selectedINedx=-1;
-//    selectedCellIndexPath= [NSIndexPath indexPathForRow:0 inSection:0];
-//    indxx=selectedCellIndexPath;
-//    //table_shutter.backgroundColor=[UIColor clearColor];
-//    view_nameHolder.hidden=YES;
-//    
-//    //    table_shutter.backgroundColor=[UIColor colorWithRed:58.0F/255 green:98.0f/255 blue:133.0f/255 alpha:1];
-//  if (app.frstScreencount==1){
-//        
-//        btn_back.hidden=YES;
-//        app.frstScreencount=2;
-//        
-//    }
-//    
-//    UISwipeGestureRecognizer * swipeleft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeleft:)];
-//    swipeleft.direction=UISwipeGestureRecognizerDirectionLeft;
-//    [self.view addGestureRecognizer:swipeleft];
-//    
-    
-  
-    
-    
-    // Do any additional setup after loading the view.
 }
--(void)showData
-{
-    
-    
-    
-    //
-    //    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    //    hud.labelText = @"Reading Devices...";
-    //    [hud show:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideLoader)
-                                                 name:@"readPresetEND"
-                                               object:nil];
-    
-    //    UIImage *imgae=[UIImage imageNamed:@"img1.png"];
-    //    NSData *imageData = [[NSData alloc] initWithData:UIImageJPEGRepresentation((imgae), 1.0)];
-    //    NSLog(@"lenthhhhbytess %ld",imageData.length);
-    
 
+-(void)registerForReadPresetEndNotification {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLoader) name:@"readPresetEND" object:nil];
 }
--(void)hideLoader
-{
+
+-(void)hideLoader {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-    //[table_shutter reloadData];
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
-     numberOfShutterArr=[[NSMutableArray alloc]init];
+-(void)viewDidAppear:(BOOL)animated {
+    
+    [self registerForReadPresetEndNotification];
+    
+    numberOfShutterArr=[[NSMutableArray alloc]init];
     PrestNameArr=[[NSMutableArray alloc]init];
     
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-    // if (data.length<1) {
     PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
-    // }
-    
     
     if (PrestNameArr.count>0) {
-        
-        
         [table_preset reloadData];
     }
-
-//    PrestNameArr=[[NSMutableArray alloc]init];
-//    
-//    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-//    // if (data.length<1) {
-//    PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
-//    // }
-//    
-//    
-//    if (PrestNameArr.count>0) {
-//        
-//        
-//        [table_preset reloadData];
-//    }
-//    else{
-        csensor=[CustomSensor sharedCustomSensor];
-        csensor.delegate=self;
-        [csensor readPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = @"Loading...";
-        [hud show:YES];
-
-    
-    //}
-
-    
+    csensor=[CustomSensor sharedCustomSensor];
+    csensor.delegate=self;
+    [csensor readPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Loading...";
+    [hud show:YES];
 }
+
 #pragma mark - custom sensor delegate
 -(void)loadPresets:(NSMutableArray *)presetsss
 {
@@ -226,17 +141,8 @@
     
     [btn.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
     
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"ConnectWithServices" object:self userInfo:nil];
     
-    //    [UIView animateWithDuration:1.5 delay:0 options:UIViewAnimationOptionRepeat animations:^{
-    //      // btn.imageView.transform = CGAffineTransformMakeRotation(M_PI);
-    //      //  btn.imageView.transform = CGAffineTransformMakeRotation(M_PI - 3.14159);
-    //        [btn setTransform:CGAffineTransformRotate(btn.transform,- M_PI*3)];
-    //    }
-    //
-    //        completion:^(BOOL finished){
-    //
-    //
-    //    }];
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Loading...";
     [hud show:YES];

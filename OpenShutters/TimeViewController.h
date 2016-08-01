@@ -43,13 +43,3 @@
 -(IBAction)daysBtnPressed:(id)sender;
 - (IBAction)doneBtnPressed:(id)sender;
 @end
-
-//NSString *str=currentTime;  //is your str
-//
-//NSArray *items = [str componentsSeparatedByString:@":"];   //take the one array for split the
-//
-//NSString *hrrr=[items objectAtIndex:0];   //shows Description
-//NSString *mininn=[items objectAtIndex:1];   //Shows Data
-//
-//NSLog(@"the days inputs arr %@",daysInputArr);
-//NSString *BINARYstr;

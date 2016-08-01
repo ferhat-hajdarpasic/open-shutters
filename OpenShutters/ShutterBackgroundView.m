@@ -403,7 +403,7 @@
             
             csensor=[CustomSensor sharedCustomSensor];
             csensor.delegate=self;
-            [csensor sendPresets:diccttt newPreset:@"newpreset"];
+            [csensor writePresets:diccttt newPreset:@"newpreset"];
         }
         
     }
@@ -428,7 +428,7 @@ else if ([self.old_new_preset isEqualToString:@"oldpreset"])
         [diccttt setObject:@"oldpreset" forKey:@"NEWPREST"];
         csensor=[CustomSensor sharedCustomSensor];
         csensor.delegate=self;
-        [csensor sendPresets:diccttt newPreset:@"oldpreset"];
+        [csensor writePresets:diccttt newPreset:@"oldpreset"];
 
     
     

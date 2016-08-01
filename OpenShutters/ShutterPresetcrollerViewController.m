@@ -338,26 +338,19 @@
     }
 
 }
--(IBAction)PresetBtnPressed:(id)sender
-{
-    [csensor  lightGreenOff];
+-(IBAction)PresetBtnPressed:(id)sender {
+    //[csensor lightGreenOff];
     for (UIView* b in viewForContiner.subviews)
     {
         [b removeFromSuperview];
     }
 
-// [csensor sendDataToPeripheral];
-//viewForCaoursel.backgroundColor=[UIColor colorWithRed:91.0F/255 green:154.0f/255 blue:160.0F/255 alpha:1];
     btnBack.hidden=YES;
     app.menu_title=@"Presets";
-   // lbl_preset_title.hidden=NO;
-  //  lbl_shutter_title.hidden=YES;
-   // lbl_shutter_sub_title.hidden=YES;
     [btn_shutter setBackgroundImage:nil forState:UIControlStateNormal];
     [btn_shutter setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [btn_preset setBackgroundImage:[UIImage imageNamed:@"name_goes_here_blue.png"] forState:UIControlStateNormal];
     [btn_preset setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-   // [carousel reloadData];
     lbl_title.text=@"Presets";
     shutterPresetLabel=@"Presets";
     [btnCancel setImage:[UIImage imageNamed:@"add_preset.png"] forState:UIControlStateNormal];
@@ -371,8 +364,6 @@
     lbl_sub_title_2.text=@"Select a preset to edit the shutters within it";
     PresetViewContoller *vc=[self.storyboard instantiateViewControllerWithIdentifier:@"PresetViewContoller"];
     
-    //[vc setModalPresentationStyle:UIModalPresentationOverFullScreen];
-   
     [self addChildViewController:vc];
     vc.delegate=self;
     vc.view.frame =viewForContiner.frame;
@@ -380,8 +371,8 @@
     [self.view bringSubviewToFront:top_view];
     [self.view bringSubviewToFront:view_bottom];
     [vc didMoveToParentViewController:self];
-    
 }
+
 -(IBAction)backBtnPressed:(id)sender
 {
     [csensor  lightGreenOff];

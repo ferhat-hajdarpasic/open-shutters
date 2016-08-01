@@ -38,7 +38,7 @@
 }
 -(void)clock;
 -(void)connectClockID;
--(void)sendPresets:(NSDictionary *)dicttnry newPreset:(NSString *)newpreset;
+-(void)writePresets:(NSDictionary *)dicttnry newPreset:(NSString *)newpreset;
 -(void)readPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)sendDataToPeripheral2;
 -(void)sendDataToPeripheral;
@@ -64,6 +64,7 @@
 @property (nonatomic)BOOL discoverServicesAfterConnect;
 @property (nonatomic)int clockSetResponseCount;
 @property (nonatomic)int nameSetResponseCount;
+@property (nonatomic)int writePresetResponseCount;
 
 + (id)sharedCustomSensor;
 -(void)lightGreenOn:(NSString *)blade;
