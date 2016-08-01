@@ -62,8 +62,8 @@
 @property (strong,nonatomic) NSMutableArray *calibertaedPresetArr;
 @property (nonatomic,weak)id <CustomSensorDelegate> delegate;
 @property (nonatomic)BOOL discoverServicesAfterConnect;
-@property (nonatomic)BOOL clockIsSet;
-@property (nonatomic)BOOL nameIsSet;
+@property (nonatomic)int clockSetResponseCount;
+@property (nonatomic)int nameSetResponseCount;
 
 + (id)sharedCustomSensor;
 -(void)lightGreenOn:(NSString *)blade;

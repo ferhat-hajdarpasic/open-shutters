@@ -237,11 +237,11 @@
                     if ([sensorInstrument isEqualToString:key]) {
                         [dictionary_devices setValue:roomShuttr forKey:sensorInstrument];
                         NSMutableDictionary *dict=[[NSMutableDictionary alloc]initWithObjectsAndKeys:roomShuttr,sensorInstrument,sensorInstrument,@"uuid", nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"SYSTEMCommand" object:self userInfo:dict];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            NSLog(@"Im on the main thread");
-                        });
-                        NSLog(@"elemennt ---- sensor elemnt %@ %@",key,sensorInstrument);
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"NameShuttersCommand" object:self userInfo:dict];
+                        //dispatch_async(dispatch_get_main_queue(), ^{
+                        //    NSLog(@"Im on the main thread");
+                        //});
+                        //NSLog(@"elemennt ---- sensor elemnt %@ %@",key,sensorInstrument);
                     }
                 }
                   selectedINedx = -1;
