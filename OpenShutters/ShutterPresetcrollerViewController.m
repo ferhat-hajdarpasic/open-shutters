@@ -617,7 +617,7 @@
     ShutterBg = (ShutterBackgroundView *)[[ShutterBackgroundView alloc] initWithFrame:CGRectMake(0, 0 , viewForContiner.frame.size.width, viewForContiner.frame.size.height)];
     ShutterBg.UUIDD=uniqueID;
     ShutterBg.old_new_preset=message2;
-    ShutterBg.prest=pprest;
+    ShutterBg.preset=pprest;
   //  ShutterBg.preset_arrrr=pres;
     presetArr_old=[pres mutableCopy];
     [ShutterBg showApplyCancel];

@@ -311,7 +311,7 @@
     }
     else
     {
-        int vallll=[self.prest.mottor intValue];
+        int vallll=[self.preset.mottor intValue];
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",vallll]]];
         blade_count=vallll;
         
@@ -417,13 +417,13 @@ else if ([self.old_new_preset isEqualToString:@"oldpreset"])
         
         NSMutableDictionary *diccttt= [[NSMutableDictionary alloc]init];
         
-        [diccttt setObject:self.prest.serial_number forKey:@"serialnum"];
-        [diccttt setObject:self.prest.name forKey:@"name"];
-        [diccttt setObject:self.prest.min forKey:@"min"];
-        [diccttt setObject:self.prest.hour forKey:@"hour"];
-        [diccttt setObject:self.prest.days forKey:@"days"];
+        [diccttt setObject:self.preset.serial_number forKey:@"serialnum"];
+        [diccttt setObject:self.preset.name forKey:@"name"];
+        [diccttt setObject:self.preset.min forKey:@"min"];
+        [diccttt setObject:self.preset.hour forKey:@"hour"];
+        [diccttt setObject:self.preset.days forKey:@"days"];
         [diccttt setObject:[NSString stringWithFormat:@"%d",blade_count] forKey:@"motor"];
-        [diccttt setObject:self.prest.uuid_device forKey:@"UUID"];
+        [diccttt setObject:self.preset.uuid_device forKey:@"UUID"];
         
         [diccttt setObject:@"oldpreset" forKey:@"NEWPREST"];
         csensor=[CustomSensor sharedCustomSensor];

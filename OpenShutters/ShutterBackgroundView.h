@@ -46,8 +46,8 @@
 @property (nonatomic,retain)NSString *status;
 @property (nonatomic,retain)NSString *UUIDD;
 @property (nonatomic,retain)NSString *old_new_preset;
-@property (nonatomic,retain)Preset *prest;
-@property (strong, nonatomic)  NSMutableArray *preset_arrrr;
+@property (nonatomic,retain)Preset *preset;
+@property (strong, nonatomic)NSMutableArray *preset_arrrr;
 
 @property (nonatomic,weak)id <ShutterBackgroundViewDelegate> delegate;
 @end

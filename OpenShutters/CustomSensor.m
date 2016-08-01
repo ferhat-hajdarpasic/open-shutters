@@ -92,7 +92,7 @@ int accRange = 0;
 
 -(void)readPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn {
     r = 0;
-    prestcount=1;
+    readPresetsPresetCount=1;
     self.readPresetArr=[[NSMutableArray alloc]init];
     globalcounttp=0;
     offf=onnn;
@@ -224,6 +224,7 @@ int accRange = 0;
 
 -(void)ReadPresetDataStart:(CBPeripheral*)peripheral {
     [ttt invalidate];
+    readPresetsPresetCount = 0;
     ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
 }
 
@@ -231,7 +232,7 @@ int accRange = 0;
     CBPeripheral *p=[theTimer userInfo];
     IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
     if(greenindexxx < 4) {
-        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x04],[NSNumber numberWithInt:prestcount],[NSNumber numberWithInt:0xff],nil];
+        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x04],[NSNumber numberWithInt:readPresetsPresetCount],[NSNumber numberWithInt:0xff],nil];
         int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
@@ -843,7 +844,6 @@ int accRange = 0;
             }
         } else  if([writeCommand isEqualToString:@"0900"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommand]) {
-                //[self.m cancelPeripheralConnection:peripheral];
                 NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
                 [self.response_Arr addObject:peripheral];
                 NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
@@ -897,7 +897,6 @@ int accRange = 0;
             }
         } else  if([writeCommand containsString:@"0800"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] ){
-                //[self.m cancelPeripheralConnection:peripheral];
                 [self.response_Arr addObject:peripheral];
                 self.response_Arr=nil;
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
@@ -910,36 +909,33 @@ int accRange = 0;
                if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
                    [self.delegate readMotorValue:hex];
                }
-               offf=NO;
+               offf = NO;
             }
         } else  if([writeCommand containsString:@"04"]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"readPresetEND" object:self userInfo:nil];
-            //[self.m cancelPeripheralConnection:peripheral];
-            if (![hexStr containsString:@"00000000000000000000000000000000"]) {
-                if (prestcount < 64) {
-                    prestcount++;
-                    if (![self.readPresetArr containsObject:[NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString]]) {
-                        [self.readPresetArr addObject:[NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString]];
+            readPresetsPresetCount++;
+            BOOL isIgnoreMessages = (readPresetsPresetCount > 64);
+            if(isIgnoreMessages == false) {
+                BOOL isStopCollectingPresets = [hexStr containsString:@"00000000000000000000000000000000"];
+                BOOL isMaximumPresetsNotReached = (readPresetsPresetCount < 64);
+                if (!isStopCollectingPresets && isMaximumPresetsNotReached) {
+                    NSString* key = [NSString stringWithFormat:@"%@=%@",characteristic.value,peripheral.identifier.UUIDString];
+                    if (![self.readPresetArr containsObject: key]) {
+                        [self.readPresetArr addObject: key];
                     }
-                    //[ttt invalidate];
-                    //ttt=nil;
                     greenindexxx=0;
                     offf=YES;
+                } else {
+                    r++;
+                    greenindexxx=0;
+                    offf=YES;
+                    [self caliberatePreset];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"readPresetEND" object:self userInfo:nil];
                 }
-            } else {
-                //[self.m cancelPeripheralConnection:peripheral];
-                prestcount=1;
-                r++;
-                //[ttt invalidate];
-                //ttt=nil;
-                greenindexxx=0;
-                offf=YES;
             }
-        } else  if([writeCommand containsString:@"03"]) {
+       } else  if([writeCommand containsString:@"03"]) {
             self.writePresetResponseCount++;
             if(self.writePresetResponseCount == 1) {
                 if (![hexStr containsString:@"00000000000000000000000000000000"]) {
-                    //[self.m cancelPeripheralConnection:peripheral];
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"PresetSuccess" object:self userInfo:nil];
                 }
             }

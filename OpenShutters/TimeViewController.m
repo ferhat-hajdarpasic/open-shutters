@@ -354,12 +354,12 @@
     NSString * pos=@"3";
 
     if ([self.editOrNew isEqualToString:@"editPreset"]) {
-        Preset *prest=(Preset *)[self.edit_Preset_arr objectAtIndex:0];
+        Preset *preset=(Preset *)[self.edit_Preset_arr objectAtIndex:0];
         NSMutableDictionary *diccttt= [[NSMutableDictionary alloc]init];
         
-        [diccttt setObject:prest.serial_number forKey:@"serialnum"];
+        [diccttt setObject:preset.serial_number forKey:@"serialnum"];
         if ([txtFld_name.text isEqualToString:@""]) {
-            [diccttt setObject:prest.name forKey:@"name"];
+            [diccttt setObject:preset.name forKey:@"name"];
         } else {
             [diccttt setObject:txtFld_name.text forKey:@"name"];
         }
@@ -367,8 +367,8 @@
         [diccttt setObject:[NSString stringWithFormat:@"%@",mininn] forKey:@"min"];
         [diccttt setObject:[NSString stringWithFormat:@"%@",hrrr]  forKey:@"hour"];
         [diccttt setObject:[NSString stringWithFormat:@"%d",num] forKey:@"days"];
-        [diccttt setObject:prest.mottor forKey:@"motor"];
-        [diccttt setObject:prest.uuid_device forKey:@"UUID"];
+        [diccttt setObject:preset.mottor forKey:@"motor"];
+        [diccttt setObject:preset.uuid_device forKey:@"UUID"];
         
         [diccttt setObject:@"oldpreset" forKey:@"NEWPREST"];
         csensor=[CustomSensor sharedCustomSensor];

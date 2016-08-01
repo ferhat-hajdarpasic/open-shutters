@@ -27,7 +27,8 @@
     CBPeripheralManager * myPeripheralManager;
     CBUUID *myCustomServiceUUID ;
     CBMutableService *myService;
-    int greenindexxx,greenindexxx1,r,prestcount;
+    int greenindexxx,greenindexxx1,r;
+    int readPresetsPresetCount;
     NSTimer *ttt,*ttt1,*ReadTime;
     BOOL offf;
     NSString *uuid_peripheral;
