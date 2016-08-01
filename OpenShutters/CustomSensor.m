@@ -840,7 +840,7 @@ int accRange = 0;
                    }
                }
             } else if(self.nameSetResponseCount > 30) {
-                [self.m cancelPeripheralConnection:peripheral];
+                //[self.m cancelPeripheralConnection:peripheral];
             }
         } else  if([writeCommand isEqualToString:@"0900"]) {
             if (![hexStr containsString:@"000000000000000000000000000000000000"] && [self.writeCommandArr containsObject:writeCommand]) {
@@ -887,12 +887,12 @@ int accRange = 0;
             if (![hexStr containsString:@"000000000000000000000000000000000000"] ) {
                 self.clockSetResponseCount++;
                 if(self.clockSetResponseCount == 1) {
-                    [self.m cancelPeripheralConnection:peripheral];
+                    //[self.m cancelPeripheralConnection:peripheral];
                     [self.response_Arr addObject:peripheral];
                     self.response_Arr=nil;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
                 } else if(self.clockSetResponseCount > 30) {
-                    [self.m cancelPeripheralConnection:peripheral];
+                    //[self.m cancelPeripheralConnection:peripheral];
                 }
             }
         } else  if([writeCommand containsString:@"0800"]) {
@@ -1111,7 +1111,7 @@ int accRange = 0;
         NSLog(@"Notification began on %@", characteristic.value);
     } else {
         NSLog(@"Notification stopped on %@.  Disconnecting", characteristic);
-        [self.m cancelPeripheralConnection:peripheral];
+        //[self.m cancelPeripheralConnection:peripheral];
     }
 }
 
