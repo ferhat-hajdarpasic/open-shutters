@@ -59,7 +59,7 @@
 {
       NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
       dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:DevicesNamedList]mutableCopy];
-     //[table_preset reloadData];
+     [table_preset reloadData];
     
 }
 -(IBAction)syncBtnPressed:(id)sender
