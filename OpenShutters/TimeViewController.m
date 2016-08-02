@@ -112,11 +112,8 @@
 }
 
 
--(void)loadTimeDays:(NSMutableArray *)presets_arr
-{
+-(void)loadTimeDays:(NSMutableArray *)presets_arr {
     Preset *prest=(Preset *)[presets_arr objectAtIndex:0];
-    NSString *str=prest.days;
-    //////// set time
     NSLog(@"HOURRR AND MINN. days%@ %@ %@",prest.hour,prest.min,prest.days);
     NSDate *datte=[self.datePicker date];
     NSCalendar *calender=[NSCalendar currentCalendar];
@@ -126,18 +123,11 @@
 
     [components setMinute:minn];
     [components setHour:hrrrr];
-//NSLog(@"binario %@",binary);
     
     NSDate *newdate=[calender dateFromComponents:components];
     [self.datePicker setDate:newdate];
     [self.datePicker reloadInputViews];
     
-    /////
-   
-//    NSUInteger hexAsInt;
-//    [[NSScanner scannerWithString:str] scanHexInt:&hexAsInt];
-//    NSString *binary = [NSString stringWithFormat:@"%@", [self toBinary:hexAsInt strLength:[str length]]];
-    //NSLog(@"binario %@",binary);
     NSString *hex = prest.days;
     NSUInteger hexAsInt;
     [[NSScanner scannerWithString:hex] scanHexInt:&hexAsInt];
@@ -148,21 +138,13 @@
       binary=[NSString stringWithFormat:@"%@%@",@"0",binary];
     }
     NSLog(@"binario %@",binary);
-    //////
-  //  unsigned int  hexxx;
-   // [[NSScanner scannerWithString:str]scanHexInt:&hexxx];
-   // NSString *binary_days=[NSString stringWithFormat:@"%@",[self toBinary:hexxx strLenght:str.length]];
     NSLog(@"the binary days  is %@",binary);
     NSMutableArray *dayyyss=[[NSMutableArray alloc]init];
     for (int i=(int)binary.length-1; i>=0;i--) {
-        
         NSString *substr=[binary substringWithRange:NSMakeRange(i, 1)];
         [dayyyss addObject:substr];
     }
-    
     [self highlightDAYS:dayyyss];
-
-    
 }
 -(NSString *)toBinary:(NSUInteger)input strLength:(int)length{
     if (input == 1 || input == 0){
@@ -181,38 +163,23 @@
         return str;
     }
 }
--(void)highlightDAYS:(NSMutableArray *)days_arr
-{
+
+-(void)highlightDAYS:(NSMutableArray *)days_arr {
     [days_arr removeLastObject];
-    for ( int kk=0; kk<days_arr.count; kk++) {
-        
+    for ( int kk=0; kk < btn_days_arr.count; kk++) {
         UIButton * btnn=(UIButton *)[btn_days_arr objectAtIndex:kk];
-        
-        
         if ([[days_arr objectAtIndex:kk] integerValue]==0) {
             [btnn setSelected:NO];
-            
             [btnn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [btnn setBackgroundImage:[UIImage imageNamed:@"gray-dot.png"] forState:UIControlStateNormal];
-            
-         [myArray replaceObjectAtIndex:btnn.tag withObject:@"0"];
-            
-        }
-        else if ([[days_arr objectAtIndex:kk]integerValue]==1)
-        {
-            
-            
+            [myArray replaceObjectAtIndex:btnn.tag withObject:@"0"];
+        } else if ([[days_arr objectAtIndex:kk]integerValue]==1) {
             [btnn setSelected:YES];
-            
             [btnn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [btnn setBackgroundImage:[UIImage imageNamed:@"red-dot.png"] forState:UIControlStateNormal];
             [myArray replaceObjectAtIndex:btnn.tag withObject:@"1"];
         }
-        
-        
-        
     }
-
 }
 
 -(IBAction)doneClicked:(id)sender
