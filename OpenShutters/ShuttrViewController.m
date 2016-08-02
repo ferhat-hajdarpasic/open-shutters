@@ -30,62 +30,36 @@
 {
     [self pairDevices:arrrr];
 }
--(void)pairDevices:(NSMutableArray *)list
-{
+
+-(void)pairDevices:(NSMutableArray *)list {
     dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
     NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
-    //[userDeafult  removeObjectForKey:DevicesNamedList];
     app.array_devices=[[[NSMutableArray alloc]init]mutableCopy];
     app.array_devices=[list mutableCopy];
-    //  cell.textLabel.text = [NSString stringWithFormat:@"%@",p.name];
     dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:DevicesNamedList]mutableCopy];
     
-    NSLog(@"the apparray is %@",app.array_devices);
     if (dictionary_devices.count>0) {
-        
         for (int i=0; i<app.array_devices.count; i++) {
-            
             if ([[dictionary_devices valueForKey:[app.array_devices objectAtIndex:i]] isEqualToString:@""]) {
-                
                 [dictionary_devices setObject:@"" forKey:[app.array_devices objectAtIndex:i]];
-            
             }
-            
-            
         }
-        
         [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
         [userDeafult synchronize];
-    
-        
-    }
-    else{
-        
+    } else {
         for (int i=0; i<app.array_devices.count; i++) {
-            //            dictionary_devices=nil;
-            //            dictionary_devices=[[NSMutableDictionary alloc]init];
-            //          NSMutableDictionary*   dict=[[[NSMutableDictionary alloc]init]mutableCopy];
             [dictionary_devices setObject:@"" forKey:[app.array_devices objectAtIndex:i]];
             [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
             [userDeafult synchronize];
-            
-            
-            
         }
-        
-        
     }
-    
-  
-    
-    
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
       NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
       dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:DevicesNamedList]mutableCopy];
-     [table_preset reloadData];
+     //[table_preset reloadData];
     
 }
 -(IBAction)syncBtnPressed:(id)sender
@@ -163,27 +137,17 @@
     
 }
 #pragma   table cell  show detail Methods
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-
     ShuttrTableCell *cell = (ShuttrTableCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
-    
     if (!cell){
-        
-        cell = [[ShuttrTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        
+         cell = [[ShuttrTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
      }
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-
     if (indexPath.row%2==1) {
-    
         cell.contentView.backgroundColor=[UIColor colorWithRed:192.0/255.0 green:197.0/255.0  blue:196.0/255.0  alpha:1.0];
-    
     }
    
-   // cell.lbl_Shttr.text=[shuttrArr objectAtIndex:indexPath.row];
-   // cell.lbl_Shttr_sub.text=[presetArr objectAtIndex:indexPath.row];
     NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
     [tableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
     
@@ -193,37 +157,22 @@
     dictt=[[userDeafult  objectForKey:DevicesNamedList]mutableCopy];
     NSArray *arrrr= [dictt allKeys];
     NSString *strr=[dictt valueForKey:[arrrr objectAtIndex:indexPath.row]];
-    NSLog(@"strrrrr %@",strr);
-
     
-    if([strr isEqualToString:@""]){
+    if([strr isEqualToString:@""]) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-
         cell.lbl_device.hidden=NO;
-        // cell.selectionStyle=UITableViewCellSelectionStyleGray;
         cell.lbl_device.text=[arrrr objectAtIndex:indexPath.row];
         cell.lbl_Shttr.hidden=YES;
         cell.lbl_Shttr_sub.hidden=YES;
         cell.lbl_device.textColor=[UIColor darkGrayColor];
-    }
-    
-    else{
-        
-        //cell.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0f/255 blue:245.0F/255 alpha:1];
+    } else {
         NSMutableArray *items = (NSMutableArray *)[strr componentsSeparatedByString:@"-"];
         cell.lbl_Shttr.text=[items objectAtIndex:0];
         cell.lbl_Shttr_sub.text=[items objectAtIndex:1];
-        // cell.fld_room.hidden=YES;
-        //cell.fld_shuter.hidden=YES;
         cell.lbl_device.hidden=YES;
         cell.lbl_Shttr_sub.hidden=NO;
         cell.lbl_Shttr.hidden=NO;
-        
     }
-
-    
-    
-    
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

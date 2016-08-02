@@ -100,73 +100,47 @@
      }
 }
 
--(void)pairDevices:(NSMutableArray *)list
-{
+-(void)pairDevices:(NSMutableArray *)list {
+    
+    NSUserDefaults *test = [NSUserDefaults standardUserDefaults];
+    NSMutableDictionary* haha=[(NSMutableDictionary *)[test  objectForKey:DevicesNamedList]mutableCopy];
+    NSString* name = [test objectForKey:@"userFullName"];
+    NSMutableDictionary* haba = [test objectForKey:@"FERHAT_DEVICES"];
+    
     
     dictionary_devices=[[NSMutableDictionary alloc]init];
     NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
-    //[userDeafult  removeObjectForKey:DevicesNamedList];
     app.array_devices=[[NSMutableArray alloc]init];
-    //app.array_devices=list;
-        for (id obj in list) {
-            if (![app.array_devices containsObject:obj]) {
-                [app.array_devices addObject:obj];
-            }
+    for (id obj in list) {
+        if (![app.array_devices containsObject:obj]) {
+            [app.array_devices addObject:obj];
         }
-    //cell.textLabel.text = [NSString stringWithFormat:@"%@",p.name];
-    dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:DevicesNamedList]mutableCopy];
-    NSLog(@"the apparray is %@",app.array_devices);
+    }
+    dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:@"FERHAT_DEVICES"]mutableCopy];
     [userDeafult setObject:app.array_devices forKey:@"DEVICES"];
     [userDeafult synchronize];
-    if(dictionary_devices.count>0){
-    
-        
+    if(dictionary_devices.count > 0) {
         for (int i=0; i<app.array_devices.count; i++) {
-            
-            
             if([[dictionary_devices valueForKey:[app.array_devices objectAtIndex:i]] isEqualToString:@""]) {
-                
                 [dictionary_devices setObject:@"" forKey:[app.array_devices objectAtIndex:i]];
-
-            }
-    else     if([dictionary_devices valueForKey:[app.array_devices objectAtIndex:i]]==nil){
-            
-            
-            
+            } else if([dictionary_devices valueForKey:[app.array_devices objectAtIndex:i]]==nil){
                 [dictionary_devices setValue:@"" forKey:[app.array_devices objectAtIndex:i]];
-
-        
-        
             }
-           
-
-}
+        }
         [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
         [userDeafult synchronize];
-         //[table_shutter reloadData];
-        }
-    else{
-        
+        //[table_shutter reloadData];
+    } else {
         for (int i=0; i<app.array_devices.count; i++) {
             dictionary_devices=nil;
-             dictionary_devices=[[NSMutableDictionary alloc]init];
-//      //    NSMutableDictionary*   dict=[[[NSMutableDictionary alloc]init]mutableCopy];
+            dictionary_devices=[[NSMutableDictionary alloc]init];
             [dictionary_devices setObject:@"" forKey:[app.array_devices objectAtIndex:i]];
             [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
             [userDeafult synchronize];
-            
-            
-            
-            
         }
-        
-        
     }
-    
-   
-    
-    
 }
+
 #pragma mark - custom sensor delegate
 -(void)devicesFound:(NSMutableArray *)arrrr
 {
@@ -238,10 +212,6 @@
                         [dictionary_devices setValue:roomShuttr forKey:sensorInstrument];
                         NSMutableDictionary *dict=[[NSMutableDictionary alloc]initWithObjectsAndKeys:roomShuttr,sensorInstrument,sensorInstrument,@"uuid", nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"NameShuttersCommand" object:self userInfo:dict];
-                        //dispatch_async(dispatch_get_main_queue(), ^{
-                        //    NSLog(@"Im on the main thread");
-                        //});
-                        //NSLog(@"elemennt ---- sensor elemnt %@ %@",key,sensorInstrument);
                     }
                 }
                   selectedINedx = -1;
@@ -430,6 +400,10 @@
 #pragma   table cell  show detail Methods
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSUserDefaults *test = [NSUserDefaults standardUserDefaults];
+    NSMutableDictionary* haha=[(NSMutableDictionary *)[test  objectForKey:DevicesNamedList]mutableCopy];
+    NSString* name = [test objectForKey:@"userFullName"];
+    
     
     NameShutterTableViewCell *cell = (NameShutterTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
     

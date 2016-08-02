@@ -356,13 +356,6 @@
         // if (data.length<1) {
         NSMutableArray *savedprst= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
         // }
-        
-       
-       
-            
-            
-            
-
         NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
         
         NSMutableDictionary *diccttt= [(NSMutableDictionary*)[userDeafult  objectForKey:@"NEWPRESET_DATA"]mutableCopy];
