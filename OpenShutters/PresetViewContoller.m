@@ -14,13 +14,25 @@
 #import "MBProgressHUD.h"
 #import "Preset.h"
 @implementation PresetViewContoller
--(void)viewDidLoad {
-    [super viewDidLoad];
-    switchStr=@"0";
+- (void)readSavedPresetNames {
     PrestNameArr=[[NSMutableArray alloc]init];
     
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
     PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
+}
+
+- (void)clearSavedPresets {
+    NSMutableArray *preseTableCatgry=[[NSMutableArray alloc]init];
+    NSData *dataSave = [NSKeyedArchiver archivedDataWithRootObject:preseTableCatgry];
+    [[NSUserDefaults standardUserDefaults] setObject:dataSave forKey:@"saved_presets"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)viewDidLoad {
+    [super viewDidLoad];
+    switchStr=@"0";
+    [self clearSavedPresets]; // this will save you UserDefaults
+    [self readSavedPresetNames];
     
     if (PrestNameArr.count>0) {
         [table_preset reloadData];
@@ -42,15 +54,18 @@
     numberOfShutterArr=[[NSMutableArray alloc]init];
     PrestNameArr=[[NSMutableArray alloc]init];
     
-    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-    PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
+    //NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
+    //PrestNameArr= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
     
-    if (PrestNameArr.count>0) {
-        [table_preset reloadData];
-    }
+    //if (PrestNameArr.count>0) {
+    //    [table_preset reloadData];
+    //}
+    [PrestNameArr removeAllObjects];
+    [table_preset reloadData];
+    
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
-    [csensor readPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
+    [csensor readAllPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Loading...";
     [hud show:YES];
@@ -66,7 +81,7 @@
         PrestNameArr=[presetsss mutableCopy];
         [table_preset reloadData];
         
-        NSLog(@"Done Clicked.%@",PrestNameArr);
+        //NSLog(@"Done Clicked.%@",PrestNameArr);
     }
   
 
@@ -98,7 +113,7 @@
 
 -(IBAction)doneClicked:(id)sender
 {
-    NSLog(@"Done Clicked.");
+    //NSLog(@"Done Clicked.");
     [self.view endEditing:YES];
 }
 - (BOOL)prefersStatusBarHidden {
@@ -149,7 +164,7 @@
 
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
-    [csensor readPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
+    [csensor readAllPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
     
 }
 

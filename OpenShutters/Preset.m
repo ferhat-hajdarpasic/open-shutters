@@ -16,7 +16,6 @@
         return nil;
     }
     
-    self.serial_number = [decoder decodeObjectForKey:@"serial_number"];
     self.mottor = [decoder decodeObjectForKey:@"mottor"];
     self.hour = [decoder decodeObjectForKey:@"hour"];
     self.min = [decoder decodeObjectForKey:@"min"];
@@ -27,7 +26,6 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
-    [encoder encodeObject:self.serial_number forKey:@"serial_number"];
     [encoder encodeObject:self.mottor forKey:@"mottor"];
     [encoder encodeObject:self.hour forKey:@"hour"];
     [encoder encodeObject:self.min forKey:@"min"];

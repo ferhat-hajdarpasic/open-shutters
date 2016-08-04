@@ -159,7 +159,7 @@
 
 -(IBAction)doneClicked:(id)sender
 {
-    NSLog(@"Done Clicked.");
+    //NSLog(@"Done Clicked.");
     [self.view endEditing:YES];
 }
 -(void)swipeleft:(id)sender

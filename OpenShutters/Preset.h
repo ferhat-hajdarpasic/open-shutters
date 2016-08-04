@@ -10,7 +10,7 @@
 
 @interface Preset : NSObject <NSCoding>
 
-@property (strong, nonatomic) NSString *serial_number;
+//@property (strong, nonatomic) NSString *serial_number;
 @property (nonatomic, strong)NSString *mottor;
 @property (nonatomic, strong)NSString *hour;
 @property (nonatomic, strong)NSString *min;

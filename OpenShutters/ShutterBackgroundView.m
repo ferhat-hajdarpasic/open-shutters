@@ -347,88 +347,95 @@
 
 
 }
--(void)applypreset
-{
-   
-    if ([self.old_new_preset isEqualToString:@"newpreset"]) {
-        
-        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-        // if (data.length<1) {
-        NSMutableArray *savedprst= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
-        // }
-        NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
-        
-        NSMutableDictionary *diccttt= [(NSMutableDictionary*)[userDeafult  objectForKey:@"NEWPRESET_DATA"]mutableCopy];
-        BOOL isThere=NO;
-        for (int i=0; i<savedprst.count; i++) {
-            NSMutableArray *arrr=[savedprst objectAtIndex:i];
-            if (arrr.count>0) {
-                for (int kk=0; kk<arrr.count; kk++) {
-                 Preset *  prest=(Preset*)[arrr objectAtIndex:0];
-                    if ([prest.name isEqualToString:[diccttt valueForKey:@"name"]]) {
-                        isThere=YES;
-                        UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
-                                                                         message:@"You Already have a Preset with same name."
-                                                                        delegate:self
-                                                               cancelButtonTitle:@"ok"
-                                                               otherButtonTitles: nil];
-                        
-                        
-                        [alert show];
-                        break;
 
-                    }
+- (int)findPresetIndex:(NSMutableDictionary *)presetToCheck savedPresets:(NSMutableArray *)savedPresets {
+    for (int i = 0; i < savedPresets.count; i++) {
+        NSMutableArray *arrr=[savedPresets objectAtIndex:i];
+        if (arrr.count > 0) {
+            for (int kk = 0; kk < arrr.count; kk++) {
+                Preset *  preset = (Preset*)[arrr objectAtIndex:0];
+                if ([preset.name isEqualToString:[presetToCheck valueForKey:@"name"]]) {
+                    return i;
                 }
-                
-               
             }
-            
         }
-        if (isThere==NO) {
+    }
+    return -1;
+}
+
+- (BOOL)checkPresetNameExists:(NSMutableDictionary *)presetToCheck savedPresets:(NSMutableArray *)savedPresets {
+    BOOL isThere = NO;
+    if([self findPresetIndex:presetToCheck savedPresets:savedPresets] != -1) {
+        isThere=YES;
+        UIAlertView * alert =[[UIAlertView alloc ]
+                              initWithTitle:@"Open Shutter"
+                              message:@"You Already have a Preset with same name."
+                              delegate:self
+                              cancelButtonTitle:@"ok"
+                              otherButtonTitles: nil];
+        [alert show];
+    }
+    return isThere;
+}
+
+- (NSMutableDictionary *)preset:(NSUserDefaults *)userDeafult {
+    NSMutableDictionary *diccttt= [(NSMutableDictionary*)[userDeafult  objectForKey:@"NEWPRESET_DATA"]mutableCopy];
+    return diccttt;
+}
+
+- (NSMutableArray *)getSavedPresets {
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
+    NSMutableArray *savedPresets= [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:nil];
+    return savedPresets;
+}
+
+- (BOOL)checkPresetNameExists1:(NSMutableDictionary *)preset {
+    NSMutableArray *savedPresets = [self getSavedPresets];
+    BOOL presetNameExists = [self checkPresetNameExists:preset savedPresets:savedPresets];
+    return presetNameExists;
+}
+
+-(void)applypreset {
+    if ([self.old_new_preset isEqualToString:@"newpreset"]) {
+        NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
+        NSMutableDictionary *preset = [self preset:userDeafult];
+        BOOL presetNameExists = [self checkPresetNameExists1:preset];
+        if (presetNameExists == NO) {
             MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
             hud.labelText = @"Loading.";
             
             [hud show:YES];
 
-            [diccttt setObject:[NSString stringWithFormat:@"%d",blade_count] forKey:@"motor"];
-            [diccttt setObject:self.UUIDD forKey:@"UUID"];
-            [diccttt setObject:@"newpreset" forKey:@"NEWPREST"];
+            [preset setObject: [NSString stringWithFormat:  @"%d",blade_count] forKey : @"motor"];
+            [preset setObject: self.UUIDD forKey:  @"UUID"];
+            [preset setObject: @"newpreset" forKey : @"NEWPREST"];
             
             csensor=[CustomSensor sharedCustomSensor];
             csensor.delegate=self;
-            [csensor writePresets:diccttt newPreset:@"newpreset"];
+            [csensor writePresets:preset newPreset:@"newpreset"];
         }
-        
-    }
-else if ([self.old_new_preset isEqualToString:@"oldpreset"])
-    {
+    } else if ([self.old_new_preset isEqualToString:@"oldpreset"]) {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
         hud.labelText = @"Loading.";
         
         [hud show:YES];
+        
+        NSMutableDictionary *preset= [[NSMutableDictionary alloc]init];
+        
+        [preset setObject:self.preset.name forKey:@"name"];
+        [preset setObject:self.preset.min forKey:@"min"];
+        [preset setObject:self.preset.hour forKey:@"hour"];
+        [preset setObject:self.preset.days forKey:@"days"];
+        [preset setObject:[NSString stringWithFormat:@"%d",blade_count] forKey:@"motor"];
+        [preset setObject:self.preset.uuid_device forKey:@"UUID"];
 
-        
-        NSMutableDictionary *diccttt= [[NSMutableDictionary alloc]init];
-        
-        [diccttt setObject:self.preset.serial_number forKey:@"serialnum"];
-        [diccttt setObject:self.preset.name forKey:@"name"];
-        [diccttt setObject:self.preset.min forKey:@"min"];
-        [diccttt setObject:self.preset.hour forKey:@"hour"];
-        [diccttt setObject:self.preset.days forKey:@"days"];
-        [diccttt setObject:[NSString stringWithFormat:@"%d",blade_count] forKey:@"motor"];
-        [diccttt setObject:self.preset.uuid_device forKey:@"UUID"];
-        
-        [diccttt setObject:@"oldpreset" forKey:@"NEWPREST"];
+        [preset setObject:@"oldpreset" forKey:@"NEWPREST"];
         csensor=[CustomSensor sharedCustomSensor];
         csensor.delegate=self;
-        [csensor writePresets:diccttt newPreset:@"oldpreset"];
-
-    
-    
+        [csensor writePresets:preset newPreset:@"oldpreset"];
     }
-
-
 }
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==1) {

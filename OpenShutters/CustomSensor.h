@@ -28,6 +28,8 @@
     CBUUID *myCustomServiceUUID ;
     CBMutableService *myService;
     int greenindexxx,greenindexxx1,r;
+    int writePresetRequestMessageIndex;
+    int readPresetRequestMessageIndex;
     int readPresetsPresetCount;
     NSTimer *ttt,*ttt1,*ReadTime;
     BOOL offf;
@@ -35,12 +37,13 @@
     NSMutableDictionary *arrCHARCTERCITS;
     int globalcounttp;
     NSString *readDevice;
-    bool clockUpadte;
+    bool clockUpadte;    
+    NSMutableArray *preseTableCatgry;
 }
 -(void)clock;
 -(void)connectClockID;
 -(void)writePresets:(NSDictionary *)dicttnry newPreset:(NSString *)newpreset;
--(void)readPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
+-(void)readAllPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)sendDataToPeripheral2;
 -(void)sendDataToPeripheral;
 -(void)readMotor;

@@ -184,7 +184,7 @@
 
 -(IBAction)doneClicked:(id)sender
 {
-    NSLog(@"Done Clicked.");
+    //NSLog(@"Done Clicked.");
     [self.view endEditing:YES];
 }
 -(void)textFieldDidBeginEditing:(UITextField *)textField
@@ -324,7 +324,7 @@
         Preset *preset=(Preset *)[self.edit_Preset_arr objectAtIndex:0];
         NSMutableDictionary *diccttt= [[NSMutableDictionary alloc]init];
         
-        [diccttt setObject:preset.serial_number forKey:@"serialnum"];
+        //[diccttt setObject:preset.serial_number forKey:@"serialnum"];
         if ([txtFld_name.text isEqualToString:@""]) {
             [diccttt setObject:preset.name forKey:@"name"];
         } else {

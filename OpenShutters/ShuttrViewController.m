@@ -102,7 +102,7 @@
 }
 -(IBAction)doneClicked:(id)sender
 {
-    NSLog(@"Done Clicked.");
+    //NSLog(@"Done Clicked.");
     [self.view endEditing:YES];
 }
 - (BOOL)prefersStatusBarHidden {
