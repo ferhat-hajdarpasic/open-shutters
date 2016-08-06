@@ -103,6 +103,9 @@ int accRange = 0;
     [ttt invalidate];
     CBPeripheral *p=[self.sensorTags objectAtIndex:0];
     readPresetsPresetCount = 0;
+    preseTableCatgry=[[NSMutableArray alloc]init];
+    self.readPresetArr=[[NSMutableArray alloc]init];
+    
     [self performSelector:@selector(ReadPresetDataCommand:) withObject:p afterDelay:0.1];
 }
 
@@ -221,9 +224,6 @@ int accRange = 0;
 
 -(void)ReadPresetDataStart:(CBPeripheral*)peripheral {
     readPresetRequestMessageIndex = 0;
-    preseTableCatgry=[[NSMutableArray alloc]init];
-    self.readPresetArr=[[NSMutableArray alloc]init];
-//    readPresetsPresetCount = 0;
     ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
 }
 
@@ -882,17 +882,13 @@ int accRange = 0;
             BOOL isIgnoreMessages = (readPresetsPresetCount > 64);
             if(isIgnoreMessages == false) {
                 NSString* data_uuid_key = [NSString stringWithFormat:@"%@=%@", characteristic.value, peripheral.identifier.UUIDString];
-                if (![self.readPresetArr containsObject: data_uuid_key]) {
+                if ([self.readPresetArr containsObject: data_uuid_key] == false) {
+                    [self.readPresetArr addObject: data_uuid_key];
                     BOOL isEmptyRecord = [hexStr containsString:@"00000000000000000000000000000000"];
                     if(!isEmptyRecord) {
-                        //for(NSString* element in self.readPresetArr) {
-                            if([self.readPresetArr containsObject:data_uuid_key] == false) {
-                                NSLog(@"UUID_MOV_DATA = %@  ", characteristic.value.description);
-                                [self.readPresetArr addObject: data_uuid_key];
-                                [self caliberatePreset:data_uuid_key];
-                                [self readNextPreset];
-                            }
-                        //}
+                        NSLog(@"UUID_MOV_DATA = %@  ", characteristic.value.description);
+                        [self caliberatePreset:data_uuid_key];
+                        [self readNextPreset];
                     }
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"readPresetEND" object:self userInfo:nil];
                 }
@@ -956,7 +952,9 @@ int accRange = 0;
             [self.delegate devicesFound:self.instrummetList];
         }
 
-        //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+        //[self performSelector:@selector(connectClockID) withObject:self afterDelay:0.1f];
+        
+//[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
     }
@@ -1055,6 +1053,7 @@ int accRange = 0;
         }
     }
 }
+
 -(CBCharacteristic *) getCharateristicWithUUID:(NSString *)uuid from:(CBService *) cbService {
     for (CBCharacteristic *characteristic in cbService.characteristics) {
         if([characteristic.UUID isEqual:[CBUUID UUIDWithString:uuid]]){
