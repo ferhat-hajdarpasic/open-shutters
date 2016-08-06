@@ -21,8 +21,11 @@
     isTextFld=NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLoaderClock:) name:@"clockReadFinished" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable:) name:@"tableAftrRead" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShutterConnected:) name:@"shutterConnected" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableWrite) name:@"tableAftrWrite" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSensortagServicesConfigured:) name:@"sensortagServicesConfigured" object:nil];
+    
+    
 
     [[NSUserDefaults standardUserDefaults] setObject:@"Home" forKey:@"HomeName"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -64,9 +67,15 @@
     [self.view addGestureRecognizer:swipeleft];
 }
 
--(void)reloadTable:(NSNotification *)notify {
+-(void)onShutterConnected:(NSNotification *)notify {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     [table_shutter reloadData];
+}
+
+-(void)onSensortagServicesConfigured:(NSNotification *)notify {
+    csensor=[CustomSensor sharedCustomSensor];
+    csensor.delegate=self;
+    [csensor readSystemID];
 }
 
 -(void)hideLoaderClock:(NSNotification *)notify {
@@ -101,13 +110,6 @@
 }
 
 -(void)pairDevices:(NSMutableArray *)list {
-    
-    NSUserDefaults *test = [NSUserDefaults standardUserDefaults];
-    NSMutableDictionary* haha=[(NSMutableDictionary *)[test  objectForKey:DevicesNamedList]mutableCopy];
-    NSString* name = [test objectForKey:@"userFullName"];
-    NSMutableDictionary* haba = [test objectForKey:@"FERHAT_DEVICES"];
-    
-    
     dictionary_devices=[[NSMutableDictionary alloc]init];
     NSUserDefaults *userDeafult = [NSUserDefaults standardUserDefaults];
     app.array_devices=[[NSMutableArray alloc]init];
@@ -116,7 +118,7 @@
             [app.array_devices addObject:obj];
         }
     }
-    dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:@"FERHAT_DEVICES"]mutableCopy];
+    // Ignore existing saved shutters -> dictionary_devices=[(NSMutableDictionary *)[userDeafult  objectForKey:@"FERHAT_DEVICES"]mutableCopy];
     [userDeafult setObject:app.array_devices forKey:@"DEVICES"];
     [userDeafult synchronize];
     if(dictionary_devices.count > 0) {
@@ -129,7 +131,6 @@
         }
         [userDeafult setObject:dictionary_devices forKey:DevicesNamedList];
         [userDeafult synchronize];
-        //[table_shutter reloadData];
     } else {
         for (int i=0; i<app.array_devices.count; i++) {
             dictionary_devices=nil;

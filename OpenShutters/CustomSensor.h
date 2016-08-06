@@ -31,10 +31,11 @@
     int writePresetRequestMessageIndex;
     int readPresetRequestMessageIndex;
     int readPresetsPresetCount;
-    NSTimer *ttt,*ttt1,*ReadTime;
+    int readSystemIdRequestIndex;
+    NSTimer *ttt,*ttt1;
     BOOL offf;
     NSString *uuid_peripheral;
-    NSMutableDictionary *arrCHARCTERCITS;
+    NSMutableDictionary *sensortagCharacteristics;
     int globalcounttp;
     NSString *readDevice;
     bool clockUpadte;    
@@ -70,6 +71,11 @@
 @property (nonatomic)int nameSetResponseCount;
 @property (nonatomic)int writePresetResponseCount;
 
+@property (nonatomic)BOOL servicesConfigured;
+@property (nonatomic)BOOL movementServiceConfigured;
+@property (nonatomic)BOOL ioServiceConfigured;
+
+
 + (id)sharedCustomSensor;
 -(void)lightGreenOn:(NSString *)blade;
 -(void)lightGreenOff;
@@ -79,5 +85,6 @@
 -(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUploadshuttr:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
+-(void)readSystemID;
 
 @end

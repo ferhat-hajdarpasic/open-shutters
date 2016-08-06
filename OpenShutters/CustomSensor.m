@@ -1,6 +1,8 @@
 #import "CustomSensor.h"
 #import "Macros.h"
 #import "Preset.h"
+#import "masterUUIDList.h"
+
 #define FLAG_GYRO_Z 1 //000001
 #define FLAG_GYRO_Y 2 //000010
 #define FLAG_GYRO_X 4 //000100
@@ -50,7 +52,7 @@ int accRange = 0;
     r = 0;
     globalcounttp=0;
     offf=onnn;
-    arrCHARCTERCITS= [[NSMutableDictionary alloc]init];
+    sensortagCharacteristics= [[NSMutableDictionary alloc]init];
     self.writeCommandArr=[[NSMutableArray alloc]initWithObjects:@"0901",@"0200",@"0900",@"04",@"03",@"0801",@"0800", nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(NameShuttersCommand:) name:@"NameShuttersCommand" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ConnectWithServices:) name:@"ConnectWithServices" object:nil];    
@@ -90,6 +92,11 @@ int accRange = 0;
     }
 }
 
+-(void)readSystemID {
+    CBPeripheral *p=[self.sensorTags objectAtIndex:0];
+    [self performSelector:@selector(ReadSytemIDCommand:) withObject:p afterDelay:0.1];
+}
+
 -(void)readAllPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn {
     r = 0;
     globalcounttp=0;
@@ -112,7 +119,7 @@ int accRange = 0;
 -(void)clock {
     globalcounttp=0;
     
-    arrCHARCTERCITS= [[NSMutableDictionary alloc]init];
+    sensortagCharacteristics= [[NSMutableDictionary alloc]init];
     
     self.writeCommandArr=[[NSMutableArray alloc]initWithObjects:@"0901",@"0200",@"0900",@"04",@"0801",@"0800", nil];
     
@@ -169,7 +176,7 @@ int accRange = 0;
     for(CBPeripheral *p  in self.sensorTags) {
         NSUUID* serverId = [p identifier];
         if ([[dic valueForKey:@"uuid"] isEqualToString:serverId.UUIDString]) {
-            IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
+            IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
             NSString *vall=[dic valueForKey:serverId.UUIDString];
             NSString *checkStr=[self gethex:vall];
             NSUInteger length = [checkStr length]/2;
@@ -229,7 +236,7 @@ int accRange = 0;
 
 -(void)ReadPresetDataTimer:(NSTimer*)theTimer {
     CBPeripheral *p=[theTimer userInfo];
-    IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
+    IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
     if(readPresetRequestMessageIndex < 4) {
         NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:
                              [NSNumber numberWithInt:0xfe],
@@ -244,6 +251,39 @@ int accRange = 0;
         NSLog(@"Read presets: %@", [writeValueIO description]);
         readPresetRequestMessageIndex++;
     } else {
+        [ttt invalidate];
+        ttt = nil;
+    }
+}
+
+
+-(void)ReadSytemIDCommand:(CBPeripheral *)peripheral {
+    [self performSelector:@selector(ReadSytemIDStart:) withObject:peripheral];
+}
+
+-(void)ReadSytemIDStart:(CBPeripheral*)peripheral {
+    readSystemIdRequestIndex = 0;
+    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(ReadSytemIDTimer:) userInfo:peripheral repeats:YES];
+}
+
+
+-(void)ReadSytemIDTimer:(NSTimer*)theTimer {
+    CBPeripheral *p=[theTimer userInfo];
+    IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
+    if(readSystemIdRequestIndex < 4) {
+        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:
+                             [NSNumber numberWithInt:0xfe],
+                             [NSNumber numberWithInt:0x09],
+                             [NSNumber numberWithInt:0x00],
+                             [NSNumber numberWithInt:0xff],nil];
+        int valueToWrite = [[arr objectAtIndex:readSystemIdRequestIndex]intValue];
+        char* bytes = (char*) &valueToWrite;
+        NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
+        [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
+        NSLog(@"Read system id: %@", [writeValueIO description]);
+        readSystemIdRequestIndex++;
+    } else {
+        readSystemIdRequestIndex = 0;
         [ttt invalidate];
         ttt = nil;
     }
@@ -347,7 +387,7 @@ int accRange = 0;
     if (IOCharacteristic != nil){
         [ttt invalidate];
         [self.m connectPeripheral:UNIQUEID options:nil];
-        [self performSelector:@selector(MotorReadDate:) withObject:UNIQUEID afterDelay:5.0f];
+        [self performSelector:@selector(MotorReadDate:) withObject:UNIQUEID afterDelay:0.1f];
     }
 }
 
@@ -358,10 +398,14 @@ int accRange = 0;
 -(void)getMesageForMOTOR:(NSTimer*)theTimer
 {
     CBPeripheral *P=[theTimer userInfo];
-    IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:P];
+    IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:P];
     if(greenindexxx<4)
     {
-        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x02],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0xff],nil];
+        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:
+                             [NSNumber numberWithInt:0xfe],
+                             [NSNumber numberWithInt:0x02],
+                             [NSNumber numberWithInt:0x00],
+                             [NSNumber numberWithInt:0xff],nil];
         int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
@@ -475,7 +519,7 @@ int accRange = 0;
     NSDictionary *preset = [theTimer userInfo];
     NSString * name = [preset valueForKey:@"name"];
     CBPeripheral *peripheral = (CBPeripheral *)[preset valueForKey:@"periphral"];
-    IOCharacteristic = (CBCharacteristic *)[arrCHARCTERCITS objectForKey:peripheral];
+    IOCharacteristic = (CBCharacteristic *)[sensortagCharacteristics objectForKey:peripheral];
     NSString *checkStr = [self gethex:name];
     NSUInteger length = [checkStr length]/2;
     if ([checkStr length] > 24) {
@@ -531,22 +575,19 @@ int accRange = 0;
 -(void)clocIdCommand:(NSTimer*)theTimer
 {
     CBPeripheral *p=[theTimer userInfo];
-    IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
+    IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
     
 
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear |NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit| NSSecondCalendarUnit fromDate:[NSDate date]];
     NSString *sttr=[[NSString stringWithFormat:@"%ld",[components year]] substringFromIndex:2];
    
-    // NSString *yrr=[sttr substringFromIndex:2];
-   // NSString*  command= [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)0x0a]];
-    NSString* day = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components day]]];
+   NSString* day = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components day]]];
     NSString* month = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components month]]];
     NSString* year = [self gethexfrmDec:[NSString stringWithFormat:@"%@",sttr]];
     NSString* hrr = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components hour]]];
     NSString* min = [self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components minute]]];
     NSString* secc =[self gethexfrmDec:[NSString stringWithFormat:@"%ld",(long)[components second]]];
    
-    //NSString *string = [NSString stringWithFormat:@"%ld.%ld.%ld", (long)day, (long)month, (long)year];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy-MM-dd"];
     NSDateFormatter *format = [[NSDateFormatter alloc] init];
@@ -566,8 +607,18 @@ int accRange = 0;
         int hrrValue=[self scanValue:hrr];
         int minValue=[self scanValue:min];
         int seccValue=[self scanValue:secc];
-        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x08],[NSNumber numberWithInt:0x01],[NSNumber numberWithInt:dayValue],[NSNumber numberWithInt:monthValue],[NSNumber numberWithInt:yearValue],[NSNumber numberWithInt:seccValue],[NSNumber numberWithInt:hrrValue],[NSNumber numberWithInt:minValue],[NSNumber numberWithInt:0xff],nil];
-        
+        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[
+            NSNumber numberWithInt:0xfe],
+            [NSNumber numberWithInt:0x08],
+            [NSNumber numberWithInt:0x01],
+            [NSNumber numberWithInt:dayValue],
+            [NSNumber numberWithInt:monthValue],
+            [NSNumber numberWithInt:yearValue],
+            [NSNumber numberWithInt:seccValue],
+            [NSNumber numberWithInt:hrrValue],
+            [NSNumber numberWithInt:minValue],
+            [NSNumber numberWithInt:0xff],nil];
+
         int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
         char* bytes = (char*) &valueToWrite;
         NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
@@ -592,36 +643,11 @@ int accRange = 0;
         if (IOCharacteristic != nil) {
             offf=NO;
             if (r < self.sensorTags.count) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
             }
         }
     }
 }
-
--(void)readSytemID:(NSTimer*)theTimer {
-    CBPeripheral *p=[theTimer userInfo];
-    IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
-    if(greenindexxx<4) {
-        NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0xfe],[NSNumber numberWithInt:0x09],[NSNumber numberWithInt:0x00],[NSNumber numberWithInt:0xff],nil];
-        int valueToWrite = [[arr objectAtIndex:greenindexxx]intValue];
-        char* bytes = (char*) &valueToWrite;
-        NSData *writeValueIO = [NSData dataWithBytes:bytes length:sizeof(UInt8)];
-        [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
-        NSLog(@"Read system id: %@", [writeValueIO description]);
-        greenindexxx++;
-    } else {
-        [ReadTime invalidate];
-        ReadTime=nil;
-        greenindexxx=0;
-        offf=YES;
-        NSInteger rr= [self.sensorTags count];
-        if (r < rr) {
-            r++;
-            [self connectCommand];
-        }
-    }
-}
-
 
 -(void)lightGreenOff
 {
@@ -658,7 +684,7 @@ int accRange = 0;
 {
     
     CBPeripheral *p=[theTimer userInfo];
-    IOCharacteristic=(CBCharacteristic *)[arrCHARCTERCITS objectForKey:p];
+    IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
     if(greenindexxx<5){
         
         int  BladeValue  = [[[NSUserDefaults standardUserDefaults]
@@ -835,13 +861,13 @@ int accRange = 0;
                     if (self.response_Arr.count==self.sensorTags.count) {
                         self.response_Arr=nil;
                         r=0;
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
                     }
                 } else {
                     if (self.response_Arr.count==self.sensorTags.count) {
                         self.response_Arr=nil;
                         r=0;
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
                     }
                     NSMutableDictionary* dictionary_devices=[[[NSMutableDictionary alloc]init]mutableCopy];
                     dictionary_devices=[diccttt mutableCopy];
@@ -908,11 +934,11 @@ int accRange = 0;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if(buttonIndex == 0) {
         [[NSNotificationCenter defaultCenter]
-         postNotificationName:@"tableAftrRead"
+         postNotificationName:@"shutterConnected"
          object:self userInfo:nil];
     } else if(buttonIndex == 1) {
         [[NSNotificationCenter defaultCenter]
-         postNotificationName:@"tableAftrRead"
+         postNotificationName:@"shutterConnected"
          object:self userInfo:nil];
     }
 }
@@ -954,7 +980,7 @@ int accRange = 0;
 
         //[self performSelector:@selector(connectClockID) withObject:self afterDelay:0.1f];
         
-//[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+//[[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrWrite" object:self userInfo:nil];
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
     }
@@ -979,7 +1005,7 @@ int accRange = 0;
 
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
     NSLog(@"Peripheral Connected");
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tableAftrRead" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
     
     //if(self.discoverServicesAfterConnect == true) {
         [peripheral discoverServices:nil];
@@ -988,10 +1014,10 @@ int accRange = 0;
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-       for (CBService *s in peripheral.services) {
-           NSLog(@"servicessssensrr %@",s);
-           [peripheral discoverCharacteristics:nil forService:s];
-       }
+    for (CBService *s in peripheral.services) {
+        NSLog(@"servicessssensrr %@",s);
+        [peripheral discoverCharacteristics:nil forService:s];
+    }
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:( NSError *)error{
@@ -1015,7 +1041,7 @@ int accRange = 0;
                 [peripheral writeValue:writeValueIO forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
                 NSLog(@"Configure IO service data: %@", [writeValueIO description]);
                 IOCharacteristic = characteristic;
-                [arrCHARCTERCITS setObject:characteristic forKey:peripheral];
+                [sensortagCharacteristics setObject:characteristic forKey:peripheral];
             }
             if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_CONF]]){
                 unsigned short e = 0;
@@ -1081,7 +1107,19 @@ int accRange = 0;
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didWriteValueForCharacteristic: data = %@, Error = %@", characteristic.value, error);
+    if(!self.servicesConfigured) {
+        if([characteristic.UUID.UUIDString isEqualToString:TI_SENSORTAG_TWO_MOVEMENT_CONFIG]) {
+            self.movementServiceConfigured = true;
+        }
+        if([characteristic.UUID.UUIDString isEqualToString:TI_SENSORTAG_IO_CONFIG]) {
+            self.ioServiceConfigured = true;
+        }
+        if(self.movementServiceConfigured && self.ioServiceConfigured) {
+            self.servicesConfigured = true;
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"sensortagServicesConfigured" object:self userInfo:nil];
+        }
+    }
+    NSLog(@"didWriteValueForCharacteristic: data = %@, Error = %@", characteristic.UUID, error);
 }
 
 -(void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {

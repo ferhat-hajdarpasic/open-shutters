@@ -9,15 +9,11 @@
 #import "MBProgressHUD.h"
 @implementation ShuttrViewController
 -(void)viewDidLoad {
-    
     [super viewDidLoad];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadTable)
-                                                 name:@"tableAftrRead"
-                                               object:nil];
-    
-   app=(AppDelegate *)[[UIApplication sharedApplication]delegate];
- }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:@"shutterConnected" object:nil];
+    app=(AppDelegate *)[[UIApplication sharedApplication]delegate];
+}
+
 -(void)reloadTable
 {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
