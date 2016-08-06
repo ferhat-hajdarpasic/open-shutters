@@ -183,7 +183,7 @@
     NSLog(@"didUpdateNotificationStateForCharacteristic %@ error = %@",characteristic,error);
 }
 -(void) peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didWriteValueForCharacteristic %@ error = %@",characteristic,error);
+    //NSLog(@"didWriteValueForCharacteristic %@ error = %@",characteristic,error);
 }
 #pragma mark - SensorTag configuration
 -(NSMutableDictionary *) makeSensorTagConfiguration {

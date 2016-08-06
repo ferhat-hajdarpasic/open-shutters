@@ -20,6 +20,10 @@
     
     
 }
+- (IBAction)waveButtonClicked:(id)sender {
+    int i = 9;
+}
+
 -(void)showData
 {
     app=(AppDelegate *)[[UIApplication sharedApplication]delegate];

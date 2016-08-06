@@ -1172,6 +1172,9 @@
                                                         <constraint firstAttribute="width" constant="48" id="qXN-a8-7c7"/>
                                                     </constraints>
                                                     <state key="normal" backgroundImage="hand22.png"/>
+                                                    <connections>
+                                                        <action selector="waveButtonClicked:" destination="6l4-dw-6ey" eventType="touchUpInside" id="yxk-a2-j7p"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -1294,6 +1297,9 @@
                                                         <constraint firstAttribute="width" constant="48" id="JsH-SH-prY"/>
                                                     </constraints>
                                                     <state key="normal" backgroundImage="hand22.png"/>
+                                                    <connections>
+                                                        <action selector="waveButtonClicked:" destination="lDi-iT-Vyw" eventType="touchUpInside" id="ssp-Dk-oo4"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>

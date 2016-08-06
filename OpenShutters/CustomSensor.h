@@ -32,6 +32,8 @@
     int readPresetRequestMessageIndex;
     int readPresetsPresetCount;
     int readSystemIdRequestIndex;
+    int readMotorRequestIndex;
+    int writeMotorRequestIndex;
     NSTimer *ttt,*ttt1;
     BOOL offf;
     NSString *uuid_peripheral;
@@ -40,6 +42,7 @@
     NSString *readDevice;
     bool clockUpadte;    
     NSMutableArray *preseTableCatgry;
+    int tempTimerBladePosition;
 }
 -(void)clock;
 -(void)connectClockID;
@@ -47,7 +50,6 @@
 -(void)readAllPreset:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)sendDataToPeripheral2;
 -(void)sendDataToPeripheral;
--(void)readMotor;
 
 @property (strong, nonatomic) NSData                    *dataToSend;
 @property (nonatomic, readwrite) NSInteger              sendDataIndex;
@@ -65,6 +67,7 @@
 @property (strong,nonatomic) NSMutableArray *response_Arr;
 @property (strong,nonatomic) NSMutableArray *readPresetArr;
 @property (strong,nonatomic) NSMutableArray *calibertaedPresetArr;
+@property (strong,nonatomic) NSMutableArray *waveProcessPositions;
 @property (nonatomic,weak)id <CustomSensorDelegate> delegate;
 @property (nonatomic)BOOL discoverServicesAfterConnect;
 @property (nonatomic)int clockSetResponseCount;
@@ -74,17 +77,20 @@
 @property (nonatomic)BOOL servicesConfigured;
 @property (nonatomic)BOOL movementServiceConfigured;
 @property (nonatomic)BOOL ioServiceConfigured;
+@property (nonatomic)BOOL gotMotorPosition;
+@property (nonatomic)BOOL waveProcessIsOn;
 
 
 + (id)sharedCustomSensor;
--(void)lightGreenOn:(NSString *)blade;
+-(void)setMotorPosition:(int)blade;
 -(void)lightGreenOff;
--(void)lightRedOn:(NSString *)blade;
 -(void)lightRedOff;
 -(void)ConnectWithServices;
 -(void)connect:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUpload:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)counterUploadshuttr:(BOOL)connect UUID:(NSString *)UNIQUEID presetshutter:(NSString *)psss on:(BOOL)onnn;
 -(void)readSystemID;
+-(void)waveProcessStart;
+-(void)waveProcessSetMotorPosition;
 
 @end

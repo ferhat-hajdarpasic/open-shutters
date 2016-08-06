@@ -537,7 +537,7 @@
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didWriteValueForCharacteristic %@ error = %@",characteristic.UUID,error);
+    //NSLog(@"didWriteValueForCharacteristic %@ error = %@",characteristic.UUID,error);
 }
 
 

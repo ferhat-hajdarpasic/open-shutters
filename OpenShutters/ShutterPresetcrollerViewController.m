@@ -850,7 +850,7 @@
      //[csensor lightRedOff];
     if (!csensor.isUP) {
        
-        [csensor lightGreenOn:data];
+        [csensor setMotorPosition:[data integerValue]];
     
     }
     
@@ -864,7 +864,7 @@
 -(void)movingShutterMovementDown:(NSString *)data {
     NSLog(@"RED LIGHT ON");
     if(!csensor.isUP) {
-        [csensor lightGreenOn:data];
+        [csensor setMotorPosition:[data integerValue]];
     }
 }
 

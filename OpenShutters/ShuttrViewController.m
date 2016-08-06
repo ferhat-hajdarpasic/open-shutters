@@ -11,15 +11,32 @@
 -(void)viewDidLoad {
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:@"shutterConnected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideBusyIndicator) name:@"WaveProcessFinished" object:nil];
     app=(AppDelegate *)[[UIApplication sharedApplication]delegate];
 }
 
--(void)reloadTable
-{
+- (void)showBusyIndicator:(NSString *)message {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = message;
+    [hud show:YES];
+}
+
+- (void)hideBusyIndicator {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+}
+
+- (IBAction)waveButtonClicked:(id)sender {
+    csensor=[CustomSensor sharedCustomSensor];
+    csensor.delegate=self;
+    [csensor waveProcessStart];
+    [self showBusyIndicator:@"Please Wait..."];
+}
+
+-(void)reloadTable {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     [table_preset reloadData];
-    
 }
+
 #pragma mark - custom sensor delegate
 
 -(void)devicesFound:(NSMutableArray *)arrrr
@@ -58,15 +75,10 @@
      [table_preset reloadData];
     
 }
--(IBAction)syncBtnPressed:(id)sender
-{
-    
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Please Wait...";
-    [hud show:YES];
+-(IBAction)syncBtnPressed:(id)sender {
+    [self showBusyIndicator:@"Please Wait..."];
     app=(AppDelegate *)[[UIApplication sharedApplication]delegate];
     
-
     UIButton *btn=(UIButton *)sender;
     
     CABasicAnimation* rotationAnimation;
@@ -81,10 +93,7 @@
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
     [csensor counterUpload:NO UUID:@"" presetshutter:@"readDEV" on:YES];
-    
-    
-}
-
+ }
 
 #pragma mark - IBACTION
 -(IBAction)backBtnPressed:(id)sender
@@ -127,19 +136,21 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    [self hideBusyIndicator];
 
     return dictionary_devices.count;
     
 }
+
 #pragma   table cell  show detail Methods
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    [self hideBusyIndicator];
     ShuttrTableCell *cell = (ShuttrTableCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell){
          cell = [[ShuttrTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
      }
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    [self hideBusyIndicator];
     if (indexPath.row%2==1) {
         cell.contentView.backgroundColor=[UIColor colorWithRed:192.0/255.0 green:197.0/255.0  blue:196.0/255.0  alpha:1.0];
     }
@@ -155,7 +166,7 @@
     NSString *strr=[dictt valueForKey:[arrrr objectAtIndex:indexPath.row]];
     
     if([strr isEqualToString:@""]) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [self hideBusyIndicator];
         cell.lbl_device.hidden=NO;
         cell.lbl_device.text=[arrrr objectAtIndex:indexPath.row];
         cell.lbl_Shttr.hidden=YES;
