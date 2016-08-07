@@ -69,7 +69,7 @@ int accRange = 0;
         if([self.waveProcessPositions count] != 0) {
             NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];
             int toPosition = temp.intValue;
-            NSLog(@"toPosition is %d", toPosition);
+            NSLog(@"---toPosition is %d", toPosition);
             if(waitingForPosition == true) {
                 NSLog(@"waiting for position");
                 BOOL arrivedToPosition = (position == toPosition);
