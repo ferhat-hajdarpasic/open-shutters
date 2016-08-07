@@ -53,10 +53,10 @@ int accRange = 0;
 }
 
 -(void)waveProcessGotMotorPosition:(NSNotification *)notify {
+    NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
+    int position = temp.intValue;
     if(self.waveProcessIsOn == true) {
         if(self.waveProcessPositions == nil) {
-            NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
-            int position = temp.intValue;
             if(position > 3) {
                 self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position - 1),@(position - 2),@(position - 1),@(position), nil];
             } else {
@@ -64,15 +64,19 @@ int accRange = 0;
             }
         }
         if([self.waveProcessPositions count] != 0) {
-            NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];[self.waveProcessPositions removeObjectAtIndex:0];
+            NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];
             int toPosition = temp.intValue;
             NSLog(@"Waving position is %d", toPosition);
-            [self setMotorPosition:toPosition];
-            [NSThread sleepForTimeInterval:0.5f]; //Just for testing
-            if([self.waveProcessPositions count] == 0) {
-                self.waveProcessPositions = nil; //No more positions - stop sending
-                self.waveProcessIsOn = false;
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"WaveProcessFinished" object:self userInfo:nil];
+            BOOL arrivedToPosition = (position == toPosition);
+            if(arrivedToPosition) {
+                [self.waveProcessPositions removeObjectAtIndex:0];
+                [self setMotorPosition:toPosition];
+                //[NSThread sleepForTimeInterval:0.5f]; //Just for testing
+                if([self.waveProcessPositions count] == 0) {
+                    self.waveProcessPositions = nil; //No more positions - stop sending
+                    self.waveProcessIsOn = false;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"WaveProcessFinished" object:self userInfo:nil];
+                }
             }
         }
     }
