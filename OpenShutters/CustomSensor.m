@@ -53,6 +53,7 @@ int accRange = 0;
 }
 
 -(void)waveProcessGotMotorPosition:(NSNotification *)notify {
+    static BOOL waitingForPosition = false;
     NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
     int position = temp.intValue;
     if(self.waveProcessIsOn == true) {
@@ -66,12 +67,17 @@ int accRange = 0;
         if([self.waveProcessPositions count] != 0) {
             NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];
             int toPosition = temp.intValue;
-            NSLog(@"Waving position is %d", toPosition);
-            BOOL arrivedToPosition = (position == toPosition);
-            if(arrivedToPosition) {
+            if(waitingForPosition) {
+                BOOL arrivedToPosition = (position == toPosition);
+                if(arrivedToPosition) {
+                    waitingForPosition = false;
+                }
+            }
+            if(waitingForPosition == false) {
+                NSLog(@"Waving position is %d", toPosition);
                 [self.waveProcessPositions removeObjectAtIndex:0];
                 [self setMotorPosition:toPosition];
-                //[NSThread sleepForTimeInterval:0.5f]; //Just for testing
+                waitingForPosition = true;
                 if([self.waveProcessPositions count] == 0) {
                     self.waveProcessPositions = nil; //No more positions - stop sending
                     self.waveProcessIsOn = false;
@@ -893,7 +899,7 @@ int accRange = 0;
         } else if ([writeCommand isEqualToString:@"0200"]) {
             NSString *motorValue=[hexStr substringToIndex:2];
             int motorPosition = [motorValue intValue];
-            if (self.gotMotorPosition == false) {
+            //if (self.gotMotorPosition == false) {
                 NSLog(@"Motor position is %d", motorPosition);
                 if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
                    [self.delegate readMotorValue:motorPosition];
@@ -901,7 +907,7 @@ int accRange = 0;
                 self.gotMotorPosition = true;
                 NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
-            }
+            //}
         } else  if([writeCommand containsString:@"04"]) {
             BOOL isIgnoreMessages = (readPresetsPresetCount > 64);
             if(isIgnoreMessages == false) {
