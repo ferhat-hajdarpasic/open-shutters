@@ -843,28 +843,25 @@
 //    [vc removeFromParentViewController];
 //
 }
--(void)movingShutterMovementUp:(NSString *)data;
-{
-    NSLog(@"GREEN LIGHT ON");
-    
-     //[csensor lightRedOff];
-    if (!csensor.isUP) {
-       
-        [csensor setMotorPosition:[data integerValue]];
-    
+-(void)movingShutterMovementUp:(NSString *)data {
+    if([shutterPresetLabel isEqualToString:@"Shutters"]) {
+        NSLog(@"GREEN LIGHT ON");
+        if (!csensor.isUP) {
+            [csensor setMotorPosition:[data integerValue]];
+        }
     }
-    
 }
--(void)movingShutterMovementCenter:(NSString *)data
-{
+
+-(void)movingShutterMovementCenter:(NSString *)data {
     NSLog(@"GREEN LIGHT ON");
-    
-   
 }
+
 -(void)movingShutterMovementDown:(NSString *)data {
-    NSLog(@"RED LIGHT ON");
-    if(!csensor.isUP) {
-        [csensor setMotorPosition:[data integerValue]];
+    if([shutterPresetLabel isEqualToString:@"Shutters"]) {
+        NSLog(@"RED LIGHT ON");
+        if(!csensor.isUP) {
+            [csensor setMotorPosition:[data integerValue]];
+        }
     }
 }
 
