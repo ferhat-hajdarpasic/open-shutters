@@ -900,6 +900,12 @@ int accRange = 0;
                 self.response_Arr=nil;
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"clockReadFinished" object:self userInfo:nil];
             }
+        } else if ([writeCommand isEqualToString:@"0101"]) {
+            NSString *motorValue=[hexStr substringToIndex:2];
+            int motorPosition = [motorValue intValue];
+            NSLog(@"Motor position is %d", motorPosition);
+            NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
         } else if ([writeCommand isEqualToString:@"0200"]) {
             NSString *motorValue=[hexStr substringToIndex:2];
             int motorPosition = [motorValue intValue];
