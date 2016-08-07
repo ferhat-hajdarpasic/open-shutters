@@ -77,7 +77,6 @@
 @property (nonatomic)BOOL servicesConfigured;
 @property (nonatomic)BOOL movementServiceConfigured;
 @property (nonatomic)BOOL ioServiceConfigured;
-@property (nonatomic)BOOL gotMotorPosition;
 @property (nonatomic)BOOL waveProcessIsOn;
 
 

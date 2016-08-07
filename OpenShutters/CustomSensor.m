@@ -57,7 +57,9 @@ int accRange = 0;
     NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
     int position = temp.intValue;
     if(self.waveProcessIsOn == true) {
+        NSLog(@"waveProcessIsOn is on");
         if(self.waveProcessPositions == nil) {
+            NSLog(@"init wave positions");
             if(position > 3) {
                 self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position - 1),@(position - 2),@(position - 1),@(position), nil];
             } else {
@@ -67,9 +69,12 @@ int accRange = 0;
         if([self.waveProcessPositions count] != 0) {
             NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];
             int toPosition = temp.intValue;
-            if(waitingForPosition) {
+            NSLog(@"toPosition is %s", toPosition);
+            if(waitingForPosition == true) {
+                NSLog(@"waiting for position");
                 BOOL arrivedToPosition = (position == toPosition);
                 if(arrivedToPosition) {
+                    NSLog(@"arrived to postion");
                     waitingForPosition = false;
                 }
             }
@@ -82,6 +87,7 @@ int accRange = 0;
                     self.waveProcessPositions = nil; //No more positions - stop sending
                     self.waveProcessIsOn = false;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"WaveProcessFinished" object:self userInfo:nil];
+                    NSLog(@"wave process finished");
                 }
             }
         }
@@ -93,7 +99,6 @@ int accRange = 0;
     self.isDown=NO;
     [ttt invalidate];
     CBPeripheral *p = [self.sensorTags objectAtIndex:0];
-    self.gotMotorPosition = false;
     writeMotorRequestIndex = 0;
     tempTimerBladePosition = blade;
     ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(WriteMotorTimer:) userInfo:p repeats:YES];
@@ -435,7 +440,6 @@ int accRange = 0;
 }
 
 -(void)MotorReadCommand:(CBPeripheral*)UNIQUEID {
-    self.gotMotorPosition = false;
     ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(MotorReadTimer:) userInfo:UNIQUEID repeats:YES];
 }
 
@@ -899,15 +903,12 @@ int accRange = 0;
         } else if ([writeCommand isEqualToString:@"0200"]) {
             NSString *motorValue=[hexStr substringToIndex:2];
             int motorPosition = [motorValue intValue];
-            //if (self.gotMotorPosition == false) {
-                NSLog(@"Motor position is %d", motorPosition);
-                if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
-                   [self.delegate readMotorValue:motorPosition];
-                }
-                self.gotMotorPosition = true;
-                NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
-            //}
+            NSLog(@"Motor position is %d", motorPosition);
+            if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
+                [self.delegate readMotorValue:motorPosition];
+            }
+            NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
         } else  if([writeCommand containsString:@"04"]) {
             BOOL isIgnoreMessages = (readPresetsPresetCount > 64);
             if(isIgnoreMessages == false) {
