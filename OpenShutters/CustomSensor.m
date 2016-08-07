@@ -53,7 +53,8 @@ int accRange = 0;
 }
 
 -(void)waveProcessGotMotorPosition:(NSNotification *)notify {
-    static BOOL waitingForPosition = false;
+    static BOOL isWaitingForPosition = false;
+    static int waitingForPosition = -1;
     NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
     int position = temp.intValue;
     if(self.waveProcessIsOn == true) {
@@ -67,22 +68,21 @@ int accRange = 0;
             }
         }
         if([self.waveProcessPositions count] != 0) {
-            NSNumber* temp = [self.waveProcessPositions objectAtIndex:0];
-            int toPosition = temp.intValue;
-            NSLog(@"---toPosition is %d", toPosition);
-            if(waitingForPosition == true) {
+            NSLog(@"waiting for position is %d", waitingForPosition);
+            if(isWaitingForPosition == true) {
                 NSLog(@"waiting for position");
-                BOOL arrivedToPosition = (position == toPosition);
+                BOOL arrivedToPosition = (position == waitingForPosition);
                 if(arrivedToPosition) {
                     NSLog(@"arrived to postion");
-                    waitingForPosition = false;
+                    isWaitingForPosition = false;
                 }
             }
-            if(waitingForPosition == false) {
-                NSLog(@"Waving position is %d", toPosition);
-                [self.waveProcessPositions removeObjectAtIndex:0];
-                [self setMotorPosition:toPosition];
-                waitingForPosition = true;
+            if(isWaitingForPosition == false) {
+                NSNumber* temp = [self.waveProcessPositions objectAtIndex:0]; [self.waveProcessPositions removeObjectAtIndex:0];
+                waitingForPosition = temp.intValue;
+                NSLog(@"Waving position is %d", waitingForPosition);
+                [self setMotorPosition:waitingForPosition];
+                isWaitingForPosition = true;
                 if([self.waveProcessPositions count] == 0) {
                     self.waveProcessPositions = nil; //No more positions - stop sending
                     self.waveProcessIsOn = false;
