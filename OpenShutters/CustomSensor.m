@@ -86,6 +86,8 @@ int accRange = 0;
                 if([self.waveProcessPositions count] == 0) {
                     self.waveProcessPositions = nil; //No more positions - stop sending
                     self.waveProcessIsOn = false;
+                    waitingForPosition = -1;
+                    isWaitingForPosition = false;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"WaveProcessFinished" object:self userInfo:nil];
                     NSLog(@"wave process finished");
                 }
