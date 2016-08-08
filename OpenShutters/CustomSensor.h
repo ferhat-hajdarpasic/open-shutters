@@ -73,6 +73,7 @@
 @property (nonatomic)int clockSetResponseCount;
 @property (nonatomic)int nameSetResponseCount;
 @property (nonatomic)int writePresetResponseCount;
+@property (nonatomic)int currentMotorPosition;
 
 @property (nonatomic)BOOL servicesConfigured;
 @property (nonatomic)BOOL movementServiceConfigured;

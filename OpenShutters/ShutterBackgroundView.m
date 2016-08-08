@@ -18,6 +18,7 @@
         startTransform.c=.4;
         blade_count=1;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Hideloader:) name:@"PresetSuccess" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MotorPositionChanged:) name:@"motorPositionChanged" object:nil];
 
         self.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0F/255 blue:245.0F/255 alpha:1];
         blindArr=[[NSMutableArray alloc]init];
@@ -287,52 +288,30 @@
     lbl_cancel.hidden=YES;
 
 }
--(void)readMotorValue:(int)vall
-{
-    
+-(void)MotorPositionChanged:(NSNotification *)notify {
+    NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
+    int position = temp.intValue;
+    blade_count = position;
     [MBProgressHUD hideHUDForView:self animated:YES];
-    if (vall>=6) {
-        vall=6;
-    }
-  
-    NSLog(@"readMotorValue %d",vall);
-    [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",vall]]];
-    blade_count=vall;
-
-    
+    [self.blade_img setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d", position]]];
 }
--(void)showApplyCancel{
-    
-    
-   
+
+-(void)showApplyCancel {
     if ([self.old_new_preset isEqualToString:@"newpreset"]) {
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",1]]];
         blade_count=1;
-    }
-    else
-    {
+    } else {
         int vallll=[self.preset.mottor intValue];
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",vallll]]];
         blade_count=vallll;
-        
-
-    
     }
-    
-    
-    
-    
-    
-    
-    
-   
     
     btn_apply.hidden=NO;
     btn_cancel.hidden=NO;
     lbl_apply.hidden=NO;
     lbl_cancel.hidden=NO;
-    
 }
+
 -(void)readMOtor
 {
       
@@ -476,7 +455,20 @@
     NSLog(@"cancel btn pressed");
 
 }
+
+-(void)upMove:(id)sender {
+}
+
+- (void)showProgress:(NSString *)title {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
+    hud.labelText = title;
+    [hud show:YES];
+}
+
 -(void)upMoveStop:(id)sender {
+    if(blade_count < 6) {
+        [self showProgress:@"Wating for motor."];
+    }
     ++blade_count;
     NSLog(@"the balddeeeeee is %d",blade_count);
     if (blade_count < 0) {
@@ -488,235 +480,35 @@
     }
     if (blade_count >= 0 && blade_count < 7) {
         if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)]) {
-             [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
-         }
-        
+            [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
+        }
         self.blade_img.image=nil;
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
-        NSLog(@"blade countt %d",blade_count);
     }
-    
-//[UIImage imageNamed:@"blade_2.png"]
-//    NSString *imgName = [self.blade_img image].accessibilityIdentifier;
-//    NSLog(@"blade number%d",blade_count);
-
-  //  [timer invalidate];
-//    
-//    shuttr0=(ShutterView *)[blindArr objectAtIndex:0];
-//    shuttr1=(ShutterView *)[blindArr objectAtIndex:1];
-//    shuttr2=(ShutterView *)[blindArr objectAtIndex:2];
-//    shuttr3=(ShutterView *)[blindArr objectAtIndex:3];
-//    shuttr4=(ShutterView *)[blindArr objectAtIndex:4];/////////////////////////////////////
-//    
-//    deltaAngle=0.3;
-//    if (startTransform.c<0)
-//    {
-//        
-//        startTransform.c=.3;
-//        
-//    }
-//
-//    if (startTransform.c>0 && startTransform.c<.9) {
-//        
-//        
-//        startTransform=shuttr0.transform;
-//        shuttr0.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr1.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr2.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr3.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr4.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        startTransform=shuttr0.transform;
-//        NSLog(@"startTransform cccc %f",startTransform.c);
-//    
-//    }
-}
--(void)moveUpButton:(id)sender
-{
-    ++blade_count;
-  NSLog(@"the bladdeeeeee is %d",blade_count);
-    if (blade_count<0) {
-        blade_count=0;
-        
-    }
-    if (blade_count>6){
-        
-        blade_count=6;
-    }
-    if (blade_count>=0 && blade_count<7) {
-     // if (PRESET==NO)
-     // {  self.blade_img.image=nil;
-        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
-   // }
-    }
-
-    
-//    shuttr0=(ShutterView *)[blindArr objectAtIndex:0];
-//    shuttr1=(ShutterView *)[blindArr objectAtIndex:1];
-//    shuttr2=(ShutterView *)[blindArr objectAtIndex:2];
-//    shuttr3=(ShutterView *)[blindArr objectAtIndex:3];
-//    shuttr4=(ShutterView *)[blindArr objectAtIndex:4];
-    
-//    deltaAngle=0.4;
-//    if (startTransform.c<0)
-//    {
-//        
-//        startTransform.c=.3;
-//        
-//    }
-//
-//       if (startTransform.c>0 && startTransform.c<.9)  {
-//        
-//        startTransform=shuttr0.transform;
-//        shuttr0.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr1.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr2.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr3.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        shuttr4.transform = CGAffineTransformRotate(startTransform,-deltaAngle);
-//        startTransform=shuttr0.transform;
-//           
-//           
-//        NSLog(@"startTransform cccc %f",startTransform.c);
-//        
-//        
-//    }
-//    
-    
 }
 
--(void)upMove:(id)sender
-{
-    
-    //timer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(moveUpButton:)  userInfo:nil repeats:YES];
-
-}
-
--(void)moveDownPress:(id)sender
-{
-    
+-(void)downMoveStop:(id)sender {
+    if(blade_count > 0) {
+        [self showProgress:@"Wating for motor."];
+    }
     --blade_count;
-     NSLog(@"the balddeeeeee is %d",blade_count);
-    if (blade_count>7) {
-        blade_count=7;
+    if (blade_count > 6) {
+        blade_count = 6;
     }
-    
-    if (blade_count<0) {
-        blade_count=1;
+    if (blade_count < 0) {
+        blade_count = 0;
     }
-    // NSLog(@"blade number%d",blade_count);
-    //for (int i=0; i<self.blade_array.count; i++) {
-    if (blade_count>=0 && blade_count<7) {
-      //  if (PRESET==NO){
-        self.blade_img.image=nil;
-        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
-//}
-    }
-
-   
-    //[timer invalidate];
-    //NSLog(@"startTransformdownMoveStop %f",shuttr0.transform.a);
-//    shuttr0=(ShutterView *)[blindArr objectAtIndex:0];
-//    shuttr1=(ShutterView *)[blindArr objectAtIndex:1];
-//    shuttr2=(ShutterView *)[blindArr objectAtIndex:2];
-//    shuttr3=(ShutterView *)[blindArr objectAtIndex:3];
-//    shuttr4=(ShutterView *)[blindArr objectAtIndex:4];
-//    deltaAngle=0.4;
-//    
-// if (startTransform.c>0)
-// {
-// 
-//     startTransform.c=-.03;
-// 
-// }
-//   if (startTransform.c>-.9 &&startTransform.c<0) {
-//    
-//        startTransform=shuttr0.transform;
-//        
-//        shuttr0.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr1.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr2.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr3.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr4.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        
-//        startTransform=shuttr0.transform;
-//        NSLog(@"startTransform cccc %f",startTransform.c);
-//    
-//    }
-
-}
-
--(void)downMoveStop:(id)sender
-{
-    
-//    csensor=[CustomSensor sharedCustomSensor];
-//    csensor.delegate=self;
-//    [csensor counterUpload];
-    
-
-    --blade_count;
-    NSLog(@"the balddeeeeee is %d",blade_count);
-    if (blade_count>6) {
-        blade_count=6;
-    }
-    
-    if (blade_count<0) {
-        blade_count=0;
-    }
-    NSLog(@"blade number%d",blade_count);
-    //for (int i=0; i<self.blade_array.count; i++) {
-    if (blade_count>=0 && blade_count<7) {
-      // if (PRESET==NO)
-      // {
-        if ([self.delegate respondsToSelector:@selector(movingShutterMovementDown:)])
-        {
+    if (blade_count >= 0 && blade_count < 7) {
+        if ([self.delegate respondsToSelector:@selector(movingShutterMovementDown:)]) {
             [self.delegate movingShutterMovementDown:[NSString stringWithFormat:@"%d",blade_count]];
         }
-     //  }
-       self.blade_img.image=nil;
+        self.blade_img.image=nil;
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
-   
-       
-       }
-//
-
- //  [timer invalidate];
-//    
-//    shuttr0=(ShutterView *)[blindArr objectAtIndex:0];
-//    shuttr1=(ShutterView *)[blindArr objectAtIndex:1];
-//    shuttr2=(ShutterView *)[blindArr objectAtIndex:2];
-//    shuttr3=(ShutterView *)[blindArr objectAtIndex:3];
-//    shuttr4=(ShutterView *)[blindArr objectAtIndex:4];
-//    
-//    deltaAngle=0.4;
-//    if (startTransform.c>0)
-//    {
-//        
-//        startTransform.c=-.03;
-//        
-//    }
-//   // startTransform=shuttr0.transform;
-//   if (startTransform.c>-.9 &&startTransform.c<0) {
-//
-//    
-//        startTransform=shuttr0.transform;
-//        shuttr0.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr1.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr2.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr3.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        shuttr4.transform = CGAffineTransformRotate(startTransform,deltaAngle);
-//        startTransform=shuttr0.transform;
-//
-//        NSLog(@"startTransform cccc %f",startTransform.c);
-//      
-//    }
-
+    }
 }
 
 -(void)downMove:(id)sender
 {
-   // timer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(moveDownPress:)  userInfo:nil repeats:YES];
-    
-
-    
 }
 
 -(void)didPanSlider:(UIPanGestureRecognizer *)panGesture

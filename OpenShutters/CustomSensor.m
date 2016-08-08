@@ -827,10 +827,10 @@ int accRange = 0;
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_MOV_DATA]]) {
         static NSString* storedResponse = @"";
-        //if([storedResponse isEqualToString:characteristic.value.description] == false) {
+        if([storedResponse isEqualToString:characteristic.value.description] == false) {
             NSLog(@"UUID_MOV_DATA = %@  ", characteristic.value.description);
             storedResponse = characteristic.value.description;
-        //}
+        }
         
         NSString * hexStr = [NSString stringWithFormat:@"%@", characteristic.value];
         hexStr = [hexStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
@@ -905,17 +905,25 @@ int accRange = 0;
         } else if ([writeCommand isEqualToString:@"0101"]) {
             NSString *motorValue=[hexStr substringToIndex:2];
             int motorPosition = [motorValue intValue];
-            NSLog(@"Motor position is %d", motorPosition);
             NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
+            if(motorPosition != self.currentMotorPosition) {
+                NSLog(@"Motor position is %d", motorPosition);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"motorPositionChanged" object:self userInfo:userInfo];
+            }
+            self.currentMotorPosition = motorPosition;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
         } else if ([writeCommand isEqualToString:@"0200"]) {
             NSString *motorValue=[hexStr substringToIndex:2];
             int motorPosition = [motorValue intValue];
-            NSLog(@"Motor position is %d", motorPosition);
+            NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
+            if(motorPosition != self.currentMotorPosition) {
+                NSLog(@"Motor position is %d", motorPosition);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"motorPositionChanged" object:self userInfo:userInfo];
+            }
+            self.currentMotorPosition = motorPosition;
             if([self.delegate respondsToSelector:@selector(readMotorValue:)]) {
                 [self.delegate readMotorValue:motorPosition];
             }
-            NSDictionary* userInfo = @{@"MotorPosition": @(motorPosition)};
             [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMotorPosition" object:self userInfo:userInfo];
         } else  if([writeCommand containsString:@"04"]) {
             BOOL isIgnoreMessages = (readPresetsPresetCount > 64);
@@ -1027,6 +1035,7 @@ int accRange = 0;
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
+    self.currentMotorPosition = -1;
     for (CBService *s in peripheral.services) {
         NSLog(@"servicessssensrr %@",s);
         [peripheral discoverCharacteristics:nil forService:s];
