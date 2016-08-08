@@ -67,7 +67,7 @@
     csensor.delegate=self;
     [csensor readAllPreset:YES UUID:@"" presetshutter:@"READPRESET" on:YES];
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Loading...";
+    hud.labelText = @"Loading presets";
     [hud show:YES];
 }
 

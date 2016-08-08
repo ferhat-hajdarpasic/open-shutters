@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @protocol ShutterBackgroundViewDelegate <NSObject>
--(void)movingShutterMovementUp:(NSString *)data;
--(void)movingShutterMovementDown:(NSString *)data;
--(void)movingShutterMovementCenter:(NSString *)data;
+-(BOOL)movingShutterMovementUp:(NSString *)data;
+-(BOOL)movingShutterMovementDown:(NSString *)data;
+-(BOOL)movingShutterMovementCenter:(NSString *)data;
 -(BOOL)applyBtnShutterBGSelected:(NSString *)message indxx:(int)ind;
 -(void)cancelBtnShutterBGSelected:(NSString *)message indxx:(int)ind;
 

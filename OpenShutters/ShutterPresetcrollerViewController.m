@@ -807,62 +807,34 @@
     [myAlertController addAction: cancel];
     //Step 4: Present the alert to the user
     [self presentViewController:myAlertController animated:YES completion:nil];
-    
-
-//    UIAlertController *myAlertController = [UIAlertController alertControllerWithTitle:@"Open Shutter" message: @"Cancel all changes?" preferredStyle:UIAlertControllerStyleAlert];
-//    
-//    //Step 2: Create a UIAlertAction that can be added to the alert
-//    UIAlertAction* ok = [UIAlertAction
-//                         actionWithTitle:@"Yes"
-//                         style:UIAlertActionStyleDefault
-//                         handler:^(UIAlertAction * action)
-//                         {
-//                             //Do some thing here, eg dismiss the alertwindow
-//                             [myAlertController dismissViewControllerAnimated:YES completion:nil];
-//                             
-//                         }];
-//    UIAlertAction* cancel = [UIAlertAction
-//                             actionWithTitle:@"No"
-//                             style:UIAlertActionStyleDefault
-//                             handler:^(UIAlertAction * action)
-//                             {
-//                                 //Do some thing here, eg dismiss the alertwindow
-//                                 [myAlertController dismissViewControllerAnimated:YES completion:nil];
-//                                 
-//                             }];
-//    
-//    //Step 3: Add the UIAlertAction ok that we just created to our AlertController
-//    [myAlertController addAction: ok];
-//    [myAlertController addAction: cancel];
-//    //Step 4: Present the alert to the user
-//    [self presentViewController:myAlertController animated:YES completion:nil];
-    
-
-//    UIViewController *vc = [self.childViewControllers lastObject];
-//    [vc.view removeFromSuperview];
-//    [vc removeFromParentViewController];
-//
 }
--(void)movingShutterMovementUp:(NSString *)data {
-    if([shutterPresetLabel isEqualToString:@"Shutters"]) {
+
+-(BOOL)movingShutterMovementUp:(NSString *)data {
+    BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
+    if(isMovingMotor) {
         NSLog(@"GREEN LIGHT ON");
         if (!csensor.isUP) {
             [csensor setMotorPosition:[data integerValue]];
         }
     }
+    return isMovingMotor;
 }
 
--(void)movingShutterMovementCenter:(NSString *)data {
+-(BOOL)movingShutterMovementCenter:(NSString *)data {
+    BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
     NSLog(@"GREEN LIGHT ON");
+    return isMovingMotor;
 }
 
--(void)movingShutterMovementDown:(NSString *)data {
-    if([shutterPresetLabel isEqualToString:@"Shutters"]) {
+-(BOOL)movingShutterMovementDown:(NSString *)data {
+    BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
+    if(isMovingMotor) {
         NSLog(@"RED LIGHT ON");
         if(!csensor.isUP) {
             [csensor setMotorPosition:[data integerValue]];
         }
     }
+    return isMovingMotor;
 }
 
 -(void)didReceiveMemoryWarning {

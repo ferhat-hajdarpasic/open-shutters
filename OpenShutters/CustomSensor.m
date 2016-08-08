@@ -49,6 +49,7 @@ int accRange = 0;
 
 -(void)waveProcessStart {
     self.waveProcessIsOn = true;
+    self.currentMotorPosition = -1; //Force the message back when received.
     [self readMotor];
 }
 
@@ -61,10 +62,10 @@ int accRange = 0;
         NSLog(@"waveProcessIsOn is on");
         if(self.waveProcessPositions == nil) {
             NSLog(@"init wave positions");
-            if(position > 3) {
-                self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position - 1),@(position - 2),@(position - 1),@(position), nil];
+            if(position > 0) {
+                self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position - 1),@(position),@(position - 1),@(position), nil];
             } else {
-                self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position + 1),@(position + 2),@(position + 1),@(position), nil];
+                self.waveProcessPositions = [NSMutableArray arrayWithObjects:@(position + 1),@(position),@(position + 1),@(position), nil];
             }
         }
         if([self.waveProcessPositions count] != 0) {
@@ -99,11 +100,13 @@ int accRange = 0;
 -(void)setMotorPosition:(int)blade {
     self.isUP=NO;
     self.isDown=NO;
-    [ttt invalidate];
-    CBPeripheral *p = [self.sensorTags objectAtIndex:0];
     writeMotorRequestIndex = 0;
     tempTimerBladePosition = blade;
-    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(WriteMotorTimer:) userInfo:p repeats:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        writeMotorRequestIndex = 0;
+        CBPeripheral *p = [self.sensorTags objectAtIndex:0];
+        ttt = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(WriteMotorTimer:) userInfo:p repeats:YES];
+    });
  }
 
 
@@ -117,7 +120,7 @@ int accRange = 0;
     self.writeCommandArr=[[NSMutableArray alloc]initWithObjects:@"0901",@"0200",@"0900",@"04",@"03",@"0801",@"0800", nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(NameShuttersCommand:) name:@"NameShuttersCommand" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ConnectWithServices:) name:@"ConnectWithServices" object:nil];    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(waveProcessGotMotorPosition:) name:@"gotMotorPosition" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(waveProcessGotMotorPosition:) name:@"motorPositionChanged" object:nil];
    
     greenindexxx=0;
     self.isUP=NO;
@@ -292,8 +295,11 @@ int accRange = 0;
 }
 
 -(void)ReadPresetDataStart:(CBPeripheral*)peripheral {
-    readPresetRequestMessageIndex = 0;
-    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
+    NSObject* target = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        readPresetRequestMessageIndex = 0;
+        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:target selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
+    });
 }
 
 -(void)ReadPresetDataTimer:(NSTimer*)theTimer {
@@ -313,8 +319,10 @@ int accRange = 0;
         NSLog(@"Read presets: %@", [writeValueIO description]);
         readPresetRequestMessageIndex++;
     } else {
-        [ttt invalidate];
-        ttt = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ttt invalidate];
+            ttt = nil;
+        });
     }
 }
 
@@ -717,7 +725,7 @@ int accRange = 0;
 -(void)WriteMotorTimer:(NSTimer*)theTimer {
     CBPeripheral *p=[theTimer userInfo];
     IOCharacteristic=(CBCharacteristic *)[sensortagCharacteristics objectForKey:p];
-    if(writeMotorRequestIndex <  5) {
+    if(writeMotorRequestIndex < 5) {
         NSMutableArray *arr=[[NSMutableArray alloc]initWithObjects:
                              [NSNumber numberWithInt:0xfe],
                              [NSNumber numberWithInt:0x01],
@@ -731,11 +739,11 @@ int accRange = 0;
         [p writeValue:writeValueIO forCharacteristic:IOCharacteristic type:CBCharacteristicWriteWithResponse];
         NSLog(@"Write motor data: %@", [writeValueIO description]);
         writeMotorRequestIndex++;
-    }
-    else
-    {
-        [ttt invalidate];
-        writeMotorRequestIndex = 0;
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ttt invalidate];
+            ttt = nil;
+        });
     }
 }
 
@@ -1026,7 +1034,7 @@ int accRange = 0;
 
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
     NSLog(@"Peripheral Connected");
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
     
     //if(self.discoverServicesAfterConnect == true) {
         [peripheral discoverServices:nil];
@@ -1040,6 +1048,7 @@ int accRange = 0;
         NSLog(@"servicessssensrr %@",s);
         [peripheral discoverCharacteristics:nil forService:s];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"shutterConnected" object:self userInfo:nil];
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:( NSError *)error{

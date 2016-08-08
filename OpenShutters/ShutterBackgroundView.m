@@ -466,21 +466,20 @@
 }
 
 -(void)upMoveStop:(id)sender {
-    if(blade_count < 6) {
-        [self showProgress:@"Wating for motor."];
-    }
+    int old_blade_count = blade_count;
     ++blade_count;
-    NSLog(@"the balddeeeeee is %d",blade_count);
     if (blade_count < 0) {
         blade_count = 0;
     }
     if (blade_count > 6) {
-        
         blade_count = 6;
     }
     if (blade_count >= 0 && blade_count < 7) {
         if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)]) {
-            [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
+            BOOL isMovingMotor = [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
+            if(isMovingMotor && (old_blade_count != blade_count)) {
+                [self showProgress:@"Wating for motor."];
+            }
         }
         self.blade_img.image=nil;
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
@@ -488,9 +487,7 @@
 }
 
 -(void)downMoveStop:(id)sender {
-    if(blade_count > 0) {
-        [self showProgress:@"Wating for motor."];
-    }
+    int old_blade_count = blade_count;
     --blade_count;
     if (blade_count > 6) {
         blade_count = 6;
@@ -500,7 +497,10 @@
     }
     if (blade_count >= 0 && blade_count < 7) {
         if ([self.delegate respondsToSelector:@selector(movingShutterMovementDown:)]) {
-            [self.delegate movingShutterMovementDown:[NSString stringWithFormat:@"%d",blade_count]];
+            BOOL isMovingMotor = [self.delegate movingShutterMovementDown:[NSString stringWithFormat:@"%d",blade_count]];
+            if(isMovingMotor && (old_blade_count != blade_count)) {
+                [self showProgress:@"Wating for motor."];
+            }
         }
         self.blade_img.image=nil;
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
