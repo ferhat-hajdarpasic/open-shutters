@@ -19,140 +19,79 @@
         blade_count=1;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Hideloader:) name:@"PresetSuccess" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MotorPositionChanged:) name:@"motorPositionChanged" object:nil];
-
+        
         self.backgroundColor=[UIColor colorWithRed:245.0F/255 green:245.0F/255 blue:245.0F/255 alpha:1];
         blindArr=[[NSMutableArray alloc]init];
         isInside=NO;
-       
+        
         btnUp=[UIButton buttonWithType:UIButtonTypeCustom];
-         receivedata=[UIButton buttonWithType:UIButtonTypeCustom];
+        receivedata=[UIButton buttonWithType:UIButtonTypeCustom];
         [receivedata setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [receivedata setFrame:CGRectMake(frame.size.width*0.01,frame.size.height*0.5,400,133)];
         if (IS_IPHONE) {
             [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.15,60,63)];
-        }
-      
-        else if (IS_IPHONE_5)
-        {
-          [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.15,60,63)];
-        
-        }
-        else{
-        
-        
-          [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.2,80,85)];
-        
+        } else if (IS_IPHONE_5) {
+            [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.15,60,63)];
+        } else {
+            [btnUp setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.2,80,85)];
         }
         [btnUp setBackgroundImage:[UIImage imageNamed:@"arrow-up.png"] forState:UIControlStateNormal];
-        [btnUp addTarget:self action:@selector(upMoveStop:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+        [btnUp addTarget:self action:@selector(upMove:) forControlEvents:UIControlEventTouchDown];
         
         if (IS_IPHONE) {
-             lbl_apply=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.86,50,30)];
-        }
-        
-        else if (IS_IPHONE_5)
-        {
             lbl_apply=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.86,50,30)];
-            
-        }
-        else{
-            
-             lbl_apply=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.95,50,30)];
-            
+        } else if (IS_IPHONE_5) {
+            lbl_apply=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.86,50,30)];
+        } else {
+            lbl_apply=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.95,50,30)];
         }
         lbl_apply.textColor=[UIColor blackColor];
         lbl_apply.text=@"Apply";
         [lbl_apply setFont:[UIFont fontWithName:@"Helvetica-bold" size:8.0f]];
         lbl_apply.numberOfLines=2;
-       
-       
-        // [self bringSubviewToFront:lbl_apply];
-        
-
-    //// ////  /// /////
         if (IS_IPHONE) {
-             lbl_cancel=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.86,50,30)];
-        }
-        
-        else if (IS_IPHONE_5)
-        {
             lbl_cancel=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.86,50,30)];
-            
-        }
-        else{
-            
+        } else if (IS_IPHONE_5) {
+            lbl_cancel=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.86,50,30)];
+        } else {
             lbl_cancel=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.95,50,30)];
-            
         }
-        
-
-   
-    lbl_cancel.textColor=[UIColor blackColor];
-    lbl_cancel.text=@"Cancel";
-    [lbl_cancel setFont:[UIFont fontWithName:@"Helvetica-bold" size:8.0f]];
-      //  [receivedata.titleLabel setFont:[UIFont fontWithName:@"Helvetica-bold" size:10.0f]];
-    lbl_cancel.numberOfLines=2;
-    
-
-    /////
-    btnDown=[UIButton buttonWithType:UIButtonTypeCustom];
+        lbl_cancel.textColor=[UIColor blackColor];
+        lbl_cancel.text=@"Cancel";
+        [lbl_cancel setFont:[UIFont fontWithName:@"Helvetica-bold" size:8.0f]];
+        lbl_cancel.numberOfLines=2;
+        btnDown=[UIButton buttonWithType:UIButtonTypeCustom];
         if (IS_IPHONE) {
-             [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.34 ,60,63)];
+            [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.34 ,60,63)];
+        } else if (IS_IPHONE_5) {
+            [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.34 ,60,63)];
+        } else {
+            [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.48 ,80,85)];
         }
         
-        else if (IS_IPHONE_5)
-        {
-             [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.34 ,60,63)];
-            
-        }
-        else{
-            
-            
-             [btnDown setFrame:CGRectMake(frame.size.width*0.6,frame.size.height*0.48 ,80,85)];
-            
-        }
-
-   
-    [btnDown setBackgroundImage:[UIImage imageNamed:@"arrow-down.png"] forState:UIControlStateNormal];
-   // [btnDown addTarget:self action:@selector(downMove:) forControlEvents:UIControlEventTouchDown];
-    [btnDown addTarget:self action:@selector(downMoveStop:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanSlider:)];
-    panGesture.delegate = (id <UIGestureRecognizerDelegate>)self;
-    //[btnUp addGestureRecognizer:panGesture];
-    
-    self.layer.cornerRadius=15.0f;
-    
-    self.blade_array=[[NSMutableArray alloc]initWithObjects:@"blade_0.png",@"blade_1.png",@"blade_2.png",@"blade_3.png",@"blade_4.png",@"blade_5.png",@"blade_6.png", nil];
-    
-       ////////////////
+        [btnDown setBackgroundImage:[UIImage imageNamed:@"arrow-down.png"] forState:UIControlStateNormal];
+        [btnDown addTarget:self action:@selector(downMove:) forControlEvents:UIControlEventTouchDown];
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanSlider:)];
+        panGesture.delegate = (id <UIGestureRecognizerDelegate>)self;
         
+        self.layer.cornerRadius=15.0f;
+        
+        self.blade_array=[[NSMutableArray alloc]initWithObjects:@"blade_0.png",@"blade_1.png",@"blade_2.png",@"blade_3.png",@"blade_4.png",@"blade_5.png",@"blade_6.png", nil];
         if (IS_IPHONE) {
             lbl_status=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.66,frame.size.width*.8, frame.size.height*0.2)];
-
+            
             [lbl_status setFont:[UIFont fontWithName:@"Helvetica-bold" size:10.0f]];
-        }
-        
-        else if (IS_IPHONE_5)
-        {
+        } else if (IS_IPHONE_5) {
             lbl_status=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.66,frame.size.width*.8, frame.size.height*0.2)];
-
             [lbl_status setFont:[UIFont fontWithName:@"Helvetica-bold" size:10.0f]];
-            
-        }
-        else{
-            
+        } else {
             lbl_status=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.72,frame.size.width*.8, frame.size.height*0.2)];
-
             [lbl_status setFont:[UIFont fontWithName:@"Helvetica-bold" size:14.0f]];
-            
         }
-
+        
         lbl_status.textColor=[UIColor blackColor];
         lbl_status.text=@"Press the up & down arrows to move the shutters";
         
-        
-
-       // [lbl_status setFont:[UIFont fontWithName:@"Helvetica-bold" size:14.0f]];
         lbl_status.numberOfLines=2;
         lbl_status.textAlignment=NSTextAlignmentCenter;
         
@@ -162,46 +101,29 @@
         [sunImg setImage:[UIImage imageNamed:@"sun.png"]];
         [self addSubview:sunImg];
         if (IS_IPHONE) {
-             self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 270, 380)];
+            self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 270, 380)];
+        } else if (IS_IPHONE_5) {
+            self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 270, 380)];
+        } else {
+            self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 300, 572)];
         }
         
-        else if (IS_IPHONE_5)
-        {
-              self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 270, 380)];
-            
-        }
-        else{
-            
-            
-            self.blade_img=[[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width*0.24,frame.size.height*0.05, 300, 572)];
-            
-        }
-
         [self.blade_img  setImage:[UIImage imageNamed:@"blade_1.png"]];
         [self addSubview:self.blade_img];
         [self addSubview:lbl_status];
         [self addSubview:btnDown];
         [self addSubview:btnUp];
         [self addSubview:lbl_cancel];
-         [self addSubview:lbl_apply];
+        [self addSubview:lbl_apply];
         btn_apply=[UIButton buttonWithType:UIButtonTypeCustom];
         if (IS_IPHONE) {
-             [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.8,31,27)];
+            [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.8,31,27)];
+        } else if (IS_IPHONE_5) {
+            [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.8,31,27)];
+        } else {
+            [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.9,31,27)];
         }
         
-        else if (IS_IPHONE_5)
-        {
-              [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.8,31,27)];
-            
-        }
-        else{
-            
-            
-               [btn_apply setFrame:CGRectMake(frame.size.width*0.1,frame.size.height*0.9,31,27)];
-            
-        }
-
-     
         [btn_apply setBackgroundImage:[UIImage imageNamed:@"dark_apply.png"] forState:UIControlStateNormal];
         [btn_apply addTarget:self action:@selector(applyBtnPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:btn_apply];
@@ -209,79 +131,39 @@
         
         btn_cancel=[UIButton buttonWithType:UIButtonTypeCustom];
         if (IS_IPHONE) {
-           
             [btn_cancel setFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.8,31,30)];
-      
-        }
-        
-        else if (IS_IPHONE_5)
-        {
-            
+        } else if (IS_IPHONE_5) {
             [btn_cancel setFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.8,31,30)];
-            
-        }
-        else{
-            
-            
-         
+        } else {
             [btn_cancel setFrame:CGRectMake(frame.size.width*0.8,frame.size.height*0.9,31,30)];
-        
-            
         }
-
-       
+        
         [btn_cancel setBackgroundImage:[UIImage imageNamed:@"cancel.png"] forState:UIControlStateNormal];
         [btn_cancel addTarget:self action:@selector(cancelBtnPressed:) forControlEvents:UIControlEventTouchUpInside];
         
         [self addSubview:btn_cancel];
         
         [self bringSubviewToFront:btn_cancel];
-       ///s [self addSubview:receivedata];
-        
     }
     
     return self;
-
-}
--(void)Hideloader:(NSNotification *)notify
-{
-   
     
+}
+
+-(void)Hideloader:(NSNotification *)notify {
     [MBProgressHUD hideHUDForView:self animated:YES];
-    
-    
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
-                                                     message:@"Successfully Done."
-                                                    delegate:self
-                                           cancelButtonTitle:@"ok"
-                                           otherButtonTitles:nil];
-    
-    
+                                            message:@"Successfully Done."
+                                            delegate:self
+                                            cancelButtonTitle:@"ok"
+                                            otherButtonTitles:nil];
     [alert show];
-
-    
-    
-    
-    
 }
 
-//-(void)targetMethod:(NSTimer *)timer
-//{
-//    //[timer invalidate];
-//    [MBProgressHUD hideHUDForView:self animated:YES];
-//    
-//}
-
--(void)hideApplyCancel
-{
+-(void)hideApplyCancel {
     csensor=[CustomSensor sharedCustomSensor];
     csensor.delegate=self;
     [csensor  counterUploadshuttr:YES UUID:self.UUIDD presetshutter:@"shutterMotor" on:NO];
-   //FERHAT [MBProgressHUD showHUDAddedTo:self animated:YES];
-   
-    
-    
-   
     btn_apply.hidden=YES;
     btn_cancel.hidden=YES;
     lbl_apply.hidden=YES;
@@ -294,6 +176,12 @@
     blade_count = position;
     [MBProgressHUD hideHUDForView:self animated:YES];
     [self.blade_img setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d", position]]];
+    if(btnUp.isTouchInside == true) {
+        [self moveOneUp];
+    }
+    if(btnDown.isTouchInside == true) {
+        [self moveOneDown];
+    }
 }
 
 -(void)showApplyCancel {
@@ -316,15 +204,11 @@
 {
       
 }
--(void)recivedata:(id)sender{
-
+-(void)recivedata:(id)sender {
     UIButton *btn=(UIButton *)sender;
     NSUserDefaults *defff=[NSUserDefaults standardUserDefaults];
     NSString *strr=[defff objectForKey:@"Michaeldata"];
     [btn setTitle:[NSString stringWithFormat:@"%@",strr] forState:UIControlStateNormal];
-
-
-
 }
 
 - (int)findPresetIndex:(NSMutableDictionary *)presetToCheck savedPresets:(NSMutableArray *)savedPresets {
@@ -421,51 +305,24 @@
         [self applypreset];
     }
 }
--(void)applyBtnPressed:(id)sender
-{
-    
+-(void)applyBtnPressed:(id)sender {
     UIAlertView * alert =[[UIAlertView alloc ] initWithTitle:@"Open Shutter"
-                                                     message:@"Apply to Preset!"
-                                                    delegate:self
-                                           cancelButtonTitle:@"Cancel"
-                                           otherButtonTitles:@"Apply", nil];
-    
-    
+                                            message:@"Apply to Preset!"
+                                            delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Apply", nil];
     [alert show];
-
-    
-
-
-    if([self.delegate respondsToSelector:@selector(applyBtnShutterBGSelected:indxx:)])
-    {
-     
-        
+    if([self.delegate respondsToSelector:@selector(applyBtnShutterBGSelected:indxx:)]) {
     }
-
-    NSLog(@"apply btn pressed");
-
 }
--(void)cancelBtnPressed:(id)sender
-{
-    if([self.delegate respondsToSelector:@selector(cancelBtnShutterBGSelected:indxx:)])
-    {
+
+-(void)cancelBtnPressed:(id)sender {
+    if([self.delegate respondsToSelector:@selector(cancelBtnShutterBGSelected:indxx:)]) {
         [self.delegate cancelBtnShutterBGSelected:@"preset" indxx:1];
-        
     }
-    NSLog(@"cancel btn pressed");
-
 }
 
--(void)upMove:(id)sender {
-}
-
-- (void)showProgress:(NSString *)title {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
-    hud.labelText = title;
-    [hud show:YES];
-}
-
--(void)upMoveStop:(id)sender {
+- (void)moveOneUp {
     int old_blade_count = blade_count;
     ++blade_count;
     if (blade_count < 0) {
@@ -486,7 +343,17 @@
     }
 }
 
--(void)downMoveStop:(id)sender {
+-(void)upMove:(id)sender {
+    [self moveOneUp];
+}
+
+- (void)showProgress:(NSString *)title {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
+    hud.labelText = title;
+    [hud show:YES];
+}
+
+- (void)moveOneDown {
     int old_blade_count = blade_count;
     --blade_count;
     if (blade_count > 6) {
@@ -507,61 +374,32 @@
     }
 }
 
--(void)downMove:(id)sender
-{
+-(void)downMove:(id)sender{
+    [self moveOneDown];
 }
 
--(void)didPanSlider:(UIPanGestureRecognizer *)panGesture
-{
-    switch (panGesture.state)
-    {
-        
-        case UIGestureRecognizerStateBegan:
-        {
-            
+-(void)didPanSlider:(UIPanGestureRecognizer *)panGesture {
+    switch (panGesture.state) {
+        case UIGestureRecognizerStateBegan: {
             deltaAngle=0.0f;
-            
             CGPoint currentlocation = [panGesture locationInView:self];
-            //float deltaY =  [panGesture translationInView:self].y- [panGesture translationInView:self].x;
-            
-            //  NSLog(@"location in view %f",[touch locationInView:self].y);
-            
-            if (CGRectContainsPoint(btnUp.frame, currentlocation))
-                {
-                    float dx;
-                    float dy = 0.0;
-                
-                    for (int i=0;i<[blindArr count]; i++) {
-                    
+            if (CGRectContainsPoint(btnUp.frame, currentlocation)) {
+                float dx;
+                float dy = 0.0;
+                for (int i=0;i<[blindArr count]; i++) {
                     ShutterView *shuttr=(ShutterView *)[blindArr objectAtIndex:i];
                     dx = currentlocation.x - shuttr.center.x;
                     dy = currentlocation.y - shuttr.center.y;
-                    
                     deltaAngle = atan2(dy,dx);
-                   
-                    // 4 - Save current transform
-                  
-                    
                     startTransform = shuttr.transform;
                     shuttr.transform = CGAffineTransformMakeRotation(deltaAngle );
-                    
-                    
-                    
-                    
                 }
-                 
-                    [btnCenter setFrame:CGRectMake(btnCenter.frame.origin.x,dy, btnCenter.frame.size.width, btnCenter.frame.size.height)];
-                
+                [btnCenter setFrame:CGRectMake(btnCenter.frame.origin.x,dy, btnCenter.frame.size.width, btnCenter.frame.size.height)];
             }
         }
-    
-    case UIGestureRecognizerStateChanged:
-        {
-            
+        case UIGestureRecognizerStateChanged: {
             CGPoint currentlocation = [panGesture locationInView:self];
-            if (CGRectContainsPoint(imgvArrow.frame, currentlocation))
-            {
-                
+            if (CGRectContainsPoint(imgvArrow.frame, currentlocation)) {
                 shuttr0=(ShutterView *)[blindArr objectAtIndex:0];
                 shuttr1=(ShutterView *)[blindArr objectAtIndex:1];
                 shuttr2=(ShutterView *)[blindArr objectAtIndex:2];
@@ -580,88 +418,46 @@
                 
                 CGFloat radians = atan2f(startTransform.b, startTransform.a);
                 
-                if (deltaAngle>-.88 && deltaAngle<0.88){
-                    
+                if (deltaAngle >- .88 && deltaAngle < 0.88) {
                     shuttr0.transform = CGAffineTransformMakeRotation(deltaAngle*1.5);
                     shuttr1.transform = CGAffineTransformMakeRotation(deltaAngle*1.5);
                     shuttr2.transform = CGAffineTransformMakeRotation(deltaAngle*1.5);
                     shuttr3.transform = CGAffineTransformMakeRotation(deltaAngle*1.5);
                     shuttr4.transform = CGAffineTransformMakeRotation(deltaAngle*1.5);
                     startTransform=shuttr0.transform;
-
                 }
                 if (deltaAngle>.27) {
-                    
                     shuttr0.shadowimg.alpha = 0;
                     shuttr1.shadowimg.alpha =0;
                     shuttr2.shadowimg.alpha = 0;
                     shuttr3.shadowimg.alpha = 0;
                     shuttr4.shadowimg.alpha = 0;
-//                    
-//                    if ([self.delegate respondsToSelector:@selector(movingShutterMovementDown:)])
-//                    {
-//                        [self.delegate movingShutterMovementDown:SHUTTER_DOWN];
-//                    }
-//                    
-                    
-
-                }
-                else if (deltaAngle>.24 && deltaAngle<.27)
-                {
-                    if ([self.delegate respondsToSelector:@selector(movingShutterMovementCenter:)])
-                    {
-                       // [self.delegate movingShutterMovementCenter:@"center"];
+                } else if (deltaAngle > .24 && deltaAngle < .27) {
+                    if ([self.delegate respondsToSelector:@selector(movingShutterMovementCenter:)]) {
                     }
-                }
-                else {
+                } else {
                     shuttr0.shadowimg.alpha = 1;
                     shuttr1.shadowimg.alpha =1;
                     shuttr2.shadowimg.alpha = 1;
                     shuttr3.shadowimg.alpha = 1;
                     shuttr4.shadowimg.alpha = 1;
-                    
-                    if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)])
-                    {
-                       // [self.delegate movingShutterMovementUp:SHUTTER_UP];
+                    if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)]) {
                     }
-                
-                
-                
                 }
-              
                 NSLog(@"delta andgl %f",deltaAngle);
-
-
-                
-//                shuttr0.shadowimg.transform = CGAffineTransformMakeScale(.5*pt.x, 0.5 *pt.y);
-//                shuttr1.shadowimg.transform = CGAffineTransformMakeScale(0.5f, 0.5f);
-//                shuttr2.shadowimg.transform = CGAffineTransformMakeScale(0.5f, 0.5f);
-//                shuttr3.shadowimg.transform = CGAffineTransformMakeScale(0.5f, 0.5f);
-//                shuttr4.shadowimg.transform = CGAffineTransformMakeScale(0.5f, 0.5f);
-//
-               
-            }
-            
-    }
-    
-        case UIGestureRecognizerStateEnded:
-        {
-           
-                
-            shuttr0.transform = startTransform;
+           }
+        }
+        case UIGestureRecognizerStateEnded: {
+             shuttr0.transform = startTransform;
             shuttr1.transform = startTransform;
             shuttr2.transform =startTransform;
             shuttr3.transform = startTransform;
             shuttr4.transform = startTransform;
-            
-            
-
             isInside=NO;
         }
-            
-            
     }
 }
+
 -(void)drawRect:(CGRect)rect {
     CGContextRef currentContext = UIGraphicsGetCurrentContext();
     CGContextSaveGState(currentContext);
@@ -673,10 +469,8 @@
 
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    
     [super touchesEnded:touches withEvent:event];
-    isInside=NO;
-    
+    isInside=NO;   
 }
 
 @end
