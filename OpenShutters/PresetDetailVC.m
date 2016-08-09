@@ -11,17 +11,31 @@
 #import "PresetDetailTableCell.h"
 #import "Macros.h"
 #import "Preset.h"
+#import "MBProgressHUD.h"
+
 @implementation PresetDetailVC
 -(void)viewDidLoad {
-    
     [super viewDidLoad];
     [self showData];
      switchStr=@"0";
-    
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideBusyIndicator) name:@"WaveProcessFinished" object:nil];
 }
+
+- (void)hideBusyIndicator {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+}
+
+- (void)showBusyIndicator:(NSString *)message {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = message;
+    [hud show:YES];
+}
+
 - (IBAction)waveButtonClicked:(id)sender {
-    int i = 9;
+    csensor=[CustomSensor sharedCustomSensor];
+    csensor.delegate=self;
+    [csensor waveProcessStart];
+    [self showBusyIndicator:@"Please Wait..."];
 }
 
 -(void)showData

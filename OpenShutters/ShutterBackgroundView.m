@@ -470,7 +470,7 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
-    isInside=NO;   
+    isInside=NO;
 }
 
 @end
