@@ -102,10 +102,11 @@ int accRange = 0;
     self.isDown=NO;
     writeMotorRequestIndex = 0;
     tempTimerBladePosition = blade;
+    NSObject* _self = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         writeMotorRequestIndex = 0;
         CBPeripheral *p = [self.sensorTags objectAtIndex:0];
-        ttt = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(WriteMotorTimer:) userInfo:p repeats:YES];
+        ttt = [NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(WriteMotorTimer:) userInfo:p repeats:YES];
     });
  }
 
@@ -172,7 +173,9 @@ int accRange = 0;
 //    self.response_Arr=[[NSMutableArray alloc]init];
     
     _data = [[NSMutableData alloc] init];
-    [ttt invalidate];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [ttt invalidate];
+    });
     CBPeripheral *p=[self.sensorTags objectAtIndex:0];
     readPresetsPresetCount = 0;
     preseTableCatgry=[[NSMutableArray alloc]init];
@@ -233,7 +236,10 @@ int accRange = 0;
 }
 
 -(void)NameShuttersCommandStartTimer:(NSDictionary*)dict {
-    ttt1=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(NameShuttersCommandTimer:) userInfo:dict repeats:YES];
+    NSObject* _self = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ttt1=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(NameShuttersCommandTimer:) userInfo:dict repeats:YES];
+    });
 }
 
 -(void)NameShuttersCommandTimer:(NSTimer*)theTimer {
@@ -281,8 +287,10 @@ int accRange = 0;
                     NSLog(@"Write system id: %@", [writeValueIO description]);
                     greenindexxx++;
                 } else {
-                    [ttt1 invalidate];
-                    ttt1=nil;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [ttt1 invalidate];
+                        ttt1=nil;
+                    });
                     greenindexxx=0;
                 }
             }
@@ -295,10 +303,10 @@ int accRange = 0;
 }
 
 -(void)ReadPresetDataStart:(CBPeripheral*)peripheral {
-    NSObject* target = self;
+    readPresetRequestMessageIndex = 0;
+    NSObject* _self = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        readPresetRequestMessageIndex = 0;
-        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:target selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
+        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(ReadPresetDataTimer:) userInfo:peripheral repeats:YES];
     });
 }
 
@@ -333,7 +341,10 @@ int accRange = 0;
 
 -(void)ReadSytemIDStart:(CBPeripheral*)peripheral {
     readSystemIdRequestIndex = 0;
-    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(ReadSytemIDTimer:) userInfo:peripheral repeats:YES];
+    NSObject* _self = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(ReadSytemIDTimer:) userInfo:peripheral repeats:YES];
+    });
 }
 
 
@@ -354,8 +365,10 @@ int accRange = 0;
         readSystemIdRequestIndex++;
     } else {
         readSystemIdRequestIndex = 0;
-        [ttt invalidate];
-        ttt = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ttt invalidate];
+            ttt=nil;
+        });
     }
 }
 
@@ -444,13 +457,19 @@ int accRange = 0;
 }
 
 -(void)readMotor {
-    [ttt invalidate];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [ttt invalidate];
+        ttt=nil;
+    });
     CBPeripheral *p=[self.sensorTags objectAtIndex:0];
     [self performSelector:@selector(MotorReadCommand:) withObject:p afterDelay:0.1f];
 }
 
 -(void)MotorReadCommand:(CBPeripheral*)UNIQUEID {
-    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(MotorReadTimer:) userInfo:UNIQUEID repeats:YES];
+    NSObject* _self = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(MotorReadTimer:) userInfo:UNIQUEID repeats:YES];
+    });
 }
 
 -(void)MotorReadTimer:(NSTimer*)theTimer {
@@ -469,7 +488,10 @@ int accRange = 0;
         NSLog(@"Get message from motor data: %@", [writeValueIO description]);
         readMotorRequestIndex++;
     } else {
-        [ttt invalidate];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ttt invalidate];
+            ttt=nil;
+        });
         readMotorRequestIndex = 0;
     }
 }
@@ -487,11 +509,13 @@ int accRange = 0;
 }
 
 -(void)presetWritte:(NSDictionary*)preset {
+    NSObject* _self = self;
     self.writePresetResponseCount = 0;
     unsigned long presetIndex = preseTableCatgry.count;
     [preset setValue: @(presetIndex) forKey : @"presetIndex"];
-
-    ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(writePreset:) userInfo:preset repeats:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(writePreset:) userInfo:preset repeats:YES];
+    });
 }
 
 - (NSMutableArray *)createWritePresetCommand:(int)min hour:(int)hour days:(int)days motor:(int)motor presetIndex:(int)presetIndex {
@@ -522,38 +546,7 @@ int accRange = 0;
 
 - (NSMutableArray *)createWritePresetRequestMessage:(int)motor days:(int)days hour:(int)hour min:(int)min name:(NSString *)name dict:(NSDictionary *)dict presetIndex:(int)presetIndex {
     NSMutableArray *arr;
-    /*
-    if ([[dict valueForKey:@"NEWPREST"] isEqualToString:@"oldpreset"]) {
-     */
-        arr = [self createWritePresetCommand:min hour:hour days:days motor:motor presetIndex:presetIndex];
-        /*
-    } else {
-        BOOL collision = NO;
-        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"saved_presets"];
-        NSMutableArray *preseTMatch=[[NSMutableArray alloc]init];
-        for (int i = 0; i < self.calibertaedPresetArr.count; i++) {
-            Preset *preset=(Preset *)[self.calibertaedPresetArr objectAtIndex:i];
-            if ([[dict valueForKey:@"UUID"] isEqualToString:preset.uuid_device]) {
-                [preseTMatch addObject:preset];
-            }
-            if ([preset.name isEqualToString:name]) {
-                collision=YES;
-            }
-        }
-        if (collision==YES) {
-            UIAlertView * alert =[[UIAlertView alloc ]
-                                                    initWithTitle:@"Open Shutter"
-                                                    message:@"Preset with the name already exists!"
-                                                    delegate:self
-                                                    cancelButtonTitle:@"ok"
-                                                    otherButtonTitles: nil];
-            [alert show];
-        } else {
-            int presetIndex = (int)preseTMatch.count +1;
-            arr = [self createWritePresetCommand:min hour:hour days:days motor:motor presetIndex:presetIndex];
-        }
-    }
-         */
+    arr = [self createWritePresetCommand:min hour:hour days:days motor:motor presetIndex:presetIndex];
     return arr;
 }
 
@@ -606,7 +599,10 @@ int accRange = 0;
             writePresetRequestMessageIndex++;
       
         } else {
-            [ttt invalidate];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ttt invalidate];
+                ttt=nil;
+            });
             offf=YES;
         }
     }
@@ -617,11 +613,12 @@ int accRange = 0;
 
 -(void)connectClockID {
     clockUpadte = true;
+    NSObject* _self = self;
+    CBPeripheral *p=[self.sensorTags objectAtIndex:r];
     if (r < self.sensorTags.count) {
-        CBPeripheral *p=[self.sensorTags objectAtIndex:r];
-        ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(clocIdCommand:) userInfo:p repeats:YES];
-    } else {
-        NSLog(@"the rrrr is fulll");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            ttt=[NSTimer scheduledTimerWithTimeInterval:0.01 target:_self selector:@selector(clocIdCommand:) userInfo:p repeats:YES];
+        });
     }
 }
 
@@ -679,13 +676,14 @@ int accRange = 0;
         NSLog(@"Write clock: %@", [writeValueIO description]);
         greenindexxx++;
     } else {
-        [ttt invalidate];
-        ttt=nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ttt invalidate];
+            ttt=nil;
+        });
         greenindexxx=0;
         NSInteger rr= [self.sensorTags count];
         if (r < rr) {
             r++;
-            //[self connectClockID];
         }
     }
 }
