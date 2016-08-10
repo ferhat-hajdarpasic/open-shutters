@@ -33,7 +33,7 @@
     ShutterView *shuttr2;
     ShutterView *shuttr3;
     ShutterView *shuttr4;
-    int blade_count;
+    int bladePosition;
     CustomSensor *csensor;
     
 }

@@ -16,7 +16,7 @@
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)])) {
         startTransform.c=.4;
-        blade_count=1;
+        bladePosition=1;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Hideloader:) name:@"PresetSuccess" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(MotorPositionChanged:) name:@"motorPositionChanged" object:nil];
         
@@ -173,25 +173,19 @@
 -(void)MotorPositionChanged:(NSNotification *)notify {
     NSNumber* temp = [[notify userInfo] valueForKey:@"MotorPosition"];
     int position = temp.intValue;
-    blade_count = position;
+    bladePosition = position;
     [MBProgressHUD hideHUDForView:self animated:YES];
     [self.blade_img setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d", position]]];
-    if(btnUp.isTouchInside == true) {
-        [self moveOneUp];
-    }
-    if(btnDown.isTouchInside == true) {
-        [self moveOneDown];
-    }
 }
 
 -(void)showApplyCancel {
     if ([self.old_new_preset isEqualToString:@"newpreset"]) {
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",1]]];
-        blade_count=1;
+        bladePosition=1;
     } else {
         int vallll=[self.preset.mottor intValue];
         [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",vallll]]];
-        blade_count=vallll;
+        bladePosition=vallll;
     }
     
     btn_apply.hidden=NO;
@@ -269,7 +263,7 @@
             
             [hud show:YES];
 
-            [preset setObject: [NSString stringWithFormat:  @"%d",blade_count] forKey : @"motor"];
+            [preset setObject: [NSString stringWithFormat:  @"%d",bladePosition] forKey : @"motor"];
             [preset setObject: self.UUIDD forKey:  @"UUID"];
             [preset setObject: @"newpreset" forKey : @"NEWPREST"];
             
@@ -289,7 +283,7 @@
         [preset setObject:self.preset.min forKey:@"min"];
         [preset setObject:self.preset.hour forKey:@"hour"];
         [preset setObject:self.preset.days forKey:@"days"];
-        [preset setObject:[NSString stringWithFormat:@"%d",blade_count] forKey:@"motor"];
+        [preset setObject:[NSString stringWithFormat:@"%d",bladePosition] forKey:@"motor"];
         [preset setObject:self.preset.uuid_device forKey:@"UUID"];
 
         [preset setObject:@"oldpreset" forKey:@"NEWPREST"];
@@ -322,29 +316,36 @@
     }
 }
 
-- (void)moveOneUp {
-    int old_blade_count = blade_count;
-    ++blade_count;
-    if (blade_count < 0) {
-        blade_count = 0;
-    }
-    if (blade_count > 6) {
-        blade_count = 6;
-    }
-    if (blade_count >= 0 && blade_count < 7) {
-        if ([self.delegate respondsToSelector:@selector(movingShutterMovementUp:)]) {
-            BOOL isMovingMotor = [self.delegate movingShutterMovementUp:[NSString stringWithFormat:@"%d",blade_count]];
-            if(isMovingMotor && (old_blade_count != blade_count)) {
+- (void)moveMotorToBladePosition {
+    if (bladePosition >= 0 && bladePosition < 7) {
+        if ([self.delegate respondsToSelector:@selector(moveShutterToPosition:)]) {
+            BOOL isMovingMotor = [self.delegate moveShutterToPosition:[NSString stringWithFormat:@"%d",bladePosition]];
+            if(isMovingMotor) {
                 [self showProgress:@"Wating for motor."];
             }
         }
+    }
+}
+
+- (void)moveBladeUp {
+    ++bladePosition;
+    if (bladePosition < 0) {
+        bladePosition = 0;
+    }
+    if (bladePosition > 6) {
+        bladePosition = 6;
+    }
+    if (bladePosition >= 0 && bladePosition < 7) {
         self.blade_img.image=nil;
-        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
+        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",bladePosition]]];
     }
 }
 
 -(void)upMove:(id)sender {
-    [self moveOneUp];
+    if(bladePosition < 6) {
+        [self moveBladeUp];
+        [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(BladeMoveTimer:) userInfo:nil repeats:YES];
+    }
 }
 
 - (void)showProgress:(NSString *)title {
@@ -353,30 +354,42 @@
     [hud show:YES];
 }
 
-- (void)moveOneDown {
-    int old_blade_count = blade_count;
-    --blade_count;
-    if (blade_count > 6) {
-        blade_count = 6;
+- (void)moveBladeDown {
+    --bladePosition;
+    if (bladePosition > 6) {
+        bladePosition = 6;
     }
-    if (blade_count < 0) {
-        blade_count = 0;
+    if (bladePosition < 0) {
+        bladePosition = 0;
     }
-    if (blade_count >= 0 && blade_count < 7) {
-        if ([self.delegate respondsToSelector:@selector(movingShutterMovementDown:)]) {
-            BOOL isMovingMotor = [self.delegate movingShutterMovementDown:[NSString stringWithFormat:@"%d",blade_count]];
-            if(isMovingMotor && (old_blade_count != blade_count)) {
-                [self showProgress:@"Wating for motor."];
-            }
-        }
+    if (bladePosition >= 0 && bladePosition < 7) {
         self.blade_img.image=nil;
-        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",blade_count]]];
+        [self.blade_img  setImage:[UIImage imageNamed:[NSString stringWithFormat:@"blade_%d",bladePosition]]];
     }
 }
 
--(void)downMove:(id)sender{
-    [self moveOneDown];
+-(void)downMove:(id)sender {
+    if(bladePosition > 0) {
+        [self moveBladeDown];
+        [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(BladeMoveTimer:) userInfo:nil repeats:YES];
+    }
 }
+
+-(void)BladeMoveTimer:(NSTimer*)theTimer {
+    if(btnUp.isTouchInside == true) {
+        [self moveBladeUp];
+    }
+    if(btnDown.isTouchInside == true) {
+        [self moveBladeDown];
+    }
+    if(!btnUp.isTouchInside && !btnDown.isTouchInside) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [theTimer invalidate];
+            [self moveMotorToBladePosition];
+        });
+    }
+}
+
 
 -(void)didPanSlider:(UIPanGestureRecognizer *)panGesture {
     switch (panGesture.state) {

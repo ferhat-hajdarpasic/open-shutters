@@ -809,10 +809,9 @@
     [self presentViewController:myAlertController animated:YES completion:nil];
 }
 
--(BOOL)movingShutterMovementUp:(NSString *)data {
+-(BOOL)moveShutterToPosition:(NSString *)data {
     BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
     if(isMovingMotor) {
-        NSLog(@"GREEN LIGHT ON");
         if (!csensor.isUP) {
             [csensor setMotorPosition:[data integerValue]];
         }
@@ -822,18 +821,6 @@
 
 -(BOOL)movingShutterMovementCenter:(NSString *)data {
     BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
-    NSLog(@"GREEN LIGHT ON");
-    return isMovingMotor;
-}
-
--(BOOL)movingShutterMovementDown:(NSString *)data {
-    BOOL isMovingMotor = [shutterPresetLabel isEqualToString:@"Shutters"];
-    if(isMovingMotor) {
-        NSLog(@"RED LIGHT ON");
-        if(!csensor.isUP) {
-            [csensor setMotorPosition:[data integerValue]];
-        }
-    }
     return isMovingMotor;
 }
 

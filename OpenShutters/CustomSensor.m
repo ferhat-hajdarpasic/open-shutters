@@ -489,8 +489,7 @@ int accRange = 0;
         readMotorRequestIndex++;
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ttt invalidate];
-            ttt=nil;
+            [theTimer invalidate];
         });
         readMotorRequestIndex = 0;
     }
