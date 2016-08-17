@@ -34,6 +34,7 @@
     ShutterView *shuttr3;
     ShutterView *shuttr4;
     int bladePosition;
+    BOOL preventDoubleTap;
     CustomSensor *csensor;
     
 }

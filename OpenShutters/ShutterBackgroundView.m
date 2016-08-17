@@ -342,6 +342,10 @@
 }
 
 -(void)upMove:(id)sender {
+    if(preventDoubleTap) {
+        return;
+    }
+    preventDoubleTap = true;
     if(bladePosition < 6) {
         [self moveBladeUp];
         [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(BladeMoveTimer:) userInfo:nil repeats:YES];
@@ -369,6 +373,10 @@
 }
 
 -(void)downMove:(id)sender {
+    if(preventDoubleTap) {
+        return;
+    }
+    preventDoubleTap = true;
     if(bladePosition > 0) {
         [self moveBladeDown];
         [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(BladeMoveTimer:) userInfo:nil repeats:YES];
@@ -376,6 +384,7 @@
 }
 
 -(void)BladeMoveTimer:(NSTimer*)theTimer {
+    preventDoubleTap = false;
     if(btnUp.isTouchInside == true) {
         [self moveBladeUp];
     }
